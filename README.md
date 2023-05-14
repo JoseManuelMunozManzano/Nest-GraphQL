@@ -9,6 +9,7 @@ Del curso Udemy https://www.udemy.com/course/nest-graphql/
 ### 01-foundation
 
 Para refrescar los conocimientos de Nest.
+Es un TODO hecho en REST.
 
 Para saber más sobre Nest ver: https://github.com/JoseManuelMunozManzano/nest_desarrollo_escalable
 
