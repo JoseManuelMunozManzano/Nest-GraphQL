@@ -26,6 +26,8 @@ cd 02-todo
 yarn start:dev
 ```
 
+Para instalar GraphQL en Nest: https://docs.nestjs.com/graphql/quick-start
+
 Cosas a ver:
 
 - GraphQL Playground
