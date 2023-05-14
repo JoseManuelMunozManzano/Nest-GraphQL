@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { HelloWorldModule } from './hello-world/hello-world.module';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 @Module({
   imports: [
@@ -16,7 +17,10 @@ import { HelloWorldModule } from './hello-world/hello-world.module';
       // NOTA: Una vez definido el Resolver hello-world.resolver.ts, se creó automáticamente el fichero schema.gpl
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       // playground sirve para indicar la definición del esquema, para que los del frontend sepan como funciona.
-      //playground: false,
+      // Como vamos a trabajar con Apollo desactivamos playground.
+      playground: false,
+      // Para trabajar con Apollo
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     HelloWorldModule,
   ],
