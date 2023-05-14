@@ -50,6 +50,12 @@ cd 02-todo
 yarn start:dev
 ```
 
+Endpoint por defecto:
+
+```
+http://localhost:3000/graphql
+```
+
 Para instalar GraphQL en Nest: https://docs.nestjs.com/graphql/quick-start
 
 Cosas a ver:
