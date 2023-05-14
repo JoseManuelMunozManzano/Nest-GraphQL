@@ -5,6 +5,7 @@
 </p>
 
 Para refrescar los conocimientos de Nest.
+Es un TODO hecho en REST.
 
 Para saber más sobre Nest ver: https://github.com/JoseManuelMunozManzano/nest_desarrollo_escalable
 
