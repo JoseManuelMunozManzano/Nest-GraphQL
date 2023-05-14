@@ -23,7 +23,8 @@ export class TodoController {
   ) {}
 
   @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
+  // El @Body de la request debe tener una data como la definida en el DTO.
+  create(@Body() createTodoDto: CreateTodoDto): Todo {
     return this.todoService.create(createTodoDto);
   }
 

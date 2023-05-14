@@ -4,5 +4,5 @@ export class Todo {
 
   description: string;
 
-  done: boolean;
+  done: boolean = false;
 }
