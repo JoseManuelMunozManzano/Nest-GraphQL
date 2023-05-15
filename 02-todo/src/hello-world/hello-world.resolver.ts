@@ -1,6 +1,6 @@
 // Este Resolver lo creamos después del module con el mandato CLI
 // nest g r helloWorld --no-spec
-import { Float, Query, Resolver } from '@nestjs/graphql';
+import { Float, Int, Query, Resolver } from '@nestjs/graphql';
 
 // Proveen las instrucciones para transformar las instrucciones provenientes del cliente en data que GraphQL
 // puede utilizar. Los resolvers son similares a los controladores tradicionales de un REST endpoint con Nest,
@@ -46,5 +46,10 @@ export class HelloWorldResolver {
   // El number ya es propio de TypeScript.
   getRandomNumber(): number {
     return Math.random() * 100;
+  }
+
+  @Query(() => Int, { name: 'randomFromZeroTo' })
+  getRandomFromZeroTo(): number {
+    return Math.floor(Math.random() * 10);
   }
 }
