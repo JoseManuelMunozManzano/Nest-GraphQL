@@ -1,6 +1,6 @@
 // Este Resolver lo creamos después del module con el mandato CLI
 // nest g r helloWorld --no-spec
-import { Float, Int, Query, Resolver } from '@nestjs/graphql';
+import { Args, Float, Int, Query, Resolver } from '@nestjs/graphql';
 
 // Proveen las instrucciones para transformar las instrucciones provenientes del cliente en data que GraphQL
 // puede utilizar. Los resolvers son similares a los controladores tradicionales de un REST endpoint con Nest,
@@ -48,8 +48,25 @@ export class HelloWorldResolver {
     return Math.random() * 100;
   }
 
-  @Query(() => Int, { name: 'randomFromZeroTo' })
-  getRandomFromZeroTo(): number {
-    return Math.floor(Math.random() * 10);
+  // Mandando argumentos: es información adicional que se puede proveer en los queries. Puede estar presente
+  // en varios niveles del query para aplicar filtros o condiciones especiales.
+  // https://graphql.org/learn/queries/#arguments
+  //
+  // Para indicar que es un argumento de GraphQL se usa el decorador @Args('nombre', {type: () => tipo_dato})
+  // El nombre informado en @Args no tiene por qué ser el mismo que el de la variable de la función. Ese 'nombre'
+  // es el de GraphQL.
+  // El type se indica porque sin él el argumento to puede ser un Float, ya que es un number, pero nosotros queremos que sea solo Int.
+  // Es {type: () => Int}, como una función, porque es computado en el momento en el que se hace la petición.
+  //
+  // Para usar un valor por defecto, ya esto es algo JavaScript, pero por si solo no funciona porque hay que decirle a
+  // GraphQL que el argumento to es opcional (por defecto es obligatorio) Para ello, indicar la opción nullable a true.
+  @Query(() => Int, {
+    name: 'randomFromZeroTo',
+    description: 'From zero to argument TO (default 6)',
+  })
+  getRandomFromZeroTo(
+    @Args('to', { nullable: true, type: () => Int }) to: number = 6,
+  ): number {
+    return Math.floor(Math.random() * to);
   }
 }
