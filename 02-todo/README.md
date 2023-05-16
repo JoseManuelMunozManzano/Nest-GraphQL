@@ -43,3 +43,14 @@ Cosas a ver:
 - Args
 - Queries
 - Instalaciones en Nest
+- Alias
+- Fragments
+- Queries
+- Mutations
+- Aggregations
+- Deprecated directive
+- Args
+- Inputs
+- Custom Types
+- Servicios
+- CRUD
