@@ -1,6 +1,6 @@
 // Se crea lo segundo de todo con el mandato CLI
 //  nest g r todo --no-spec
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Query, Resolver } from '@nestjs/graphql';
 import { TodoService } from './todo.service';
 import { Todo } from './entities/todo.entity';
 
@@ -14,8 +14,9 @@ export class TodoResolver {
     return this.todoService.findAll();
   }
 
-  findOne() {
-    return [];
+  @Query(() => Todo, { name: 'todo' })
+  findOne(@Args('id', { type: () => Int }) id: number): Todo {
+    return this.todoService.findOne(id);
   }
 
   createTodo() {}
