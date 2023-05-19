@@ -26,10 +26,8 @@ export class TodoResolver {
   // Por tanto, se usan @Query para consultas y @Mutation para mutar la data.
   @Mutation(() => Todo, { name: 'createTodo' })
   // Lo que indicamos entre paréntesis en @Args es lo que vamos a exponer al mundo exterior.
-  createTodo(@Args('createTodoInput') createTodoInput: CreateTodoInput) {
-    console.log({ createTodoInput });
-
-    return null;
+  createTodo(@Args('createTodoInput') createTodoInput: CreateTodoInput): Todo {
+    return this.todoService.create(createTodoInput);
   }
 
   updateTodo() {}
