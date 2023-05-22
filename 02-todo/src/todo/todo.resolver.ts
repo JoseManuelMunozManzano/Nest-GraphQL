@@ -3,7 +3,7 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TodoService } from './todo.service';
 import { Todo } from './entities/todo.entity';
-import { CreateTodoInput, UpdateTodoInput } from './dto/inputs';
+import { CreateTodoInput, UpdateTodoInput, StatusArgs } from './dto';
 
 // Indicamos, para que no sea tan genérico, que nuestro resolver va a trabajar con un Todo.
 // Es buena práctica.
@@ -13,8 +13,8 @@ export class TodoResolver {
 
   // Para indicar que se regresa un array de Todo, se indica [Todo]
   @Query(() => [Todo], { name: 'todos' })
-  findAll(): Todo[] {
-    return this.todoService.findAll();
+  findAll(@Args() statusArgs: StatusArgs): Todo[] {
+    return this.todoService.findAll(statusArgs);
   }
 
   @Query(() => Todo, { name: 'todo' })
