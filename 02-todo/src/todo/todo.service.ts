@@ -34,8 +34,8 @@ export class TodoService {
     return todo;
   }
 
-  update(updateTodoInput: UpdateTodoInput): Todo {
-    const { id, description, done } = updateTodoInput;
+  update(id: number, updateTodoInput: UpdateTodoInput): Todo {
+    const { description, done } = updateTodoInput;
 
     // Sabemos que si no regresa un Todo, en findOne lanza una excepción.
     const todoToUpdate = this.findOne(id);

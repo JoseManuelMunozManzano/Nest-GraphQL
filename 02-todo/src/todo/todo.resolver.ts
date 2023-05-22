@@ -36,7 +36,8 @@ export class TodoResolver {
   @Mutation(() => Todo, { name: 'updateTodo' })
   // Dentro de @Args, el updateTodoInput, es lo que el frontend me tiene que enviar.
   updateTodo(@Args('updateTodoInput') updateTodoInput: UpdateTodoInput): Todo {
-    return this.todoService.update(updateTodoInput);
+    // Es muy típico también mandar el id por separado
+    return this.todoService.update(updateTodoInput.id, updateTodoInput);
   }
 
   @Mutation(() => Boolean)
