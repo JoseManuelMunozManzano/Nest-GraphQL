@@ -3,7 +3,7 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TodoService } from './todo.service';
 import { Todo } from './entities/todo.entity';
-import { CreateTodoInput } from './dto/inputs/create-todo.input';
+import { CreateTodoInput, UpdateTodoInput } from './dto/inputs';
 
 @Resolver()
 export class TodoResolver {
@@ -30,7 +30,12 @@ export class TodoResolver {
     return this.todoService.create(createTodoInput);
   }
 
-  updateTodo() {}
+  // El id del todo que se va a actualizar viene en el Body, no como url. Ver updateTodoInput.
+  @Mutation(() => Todo, { name: 'updateTodo' })
+  // Dentro de @Args, el updateTodoInput, es lo que el frontend me tiene que enviar.
+  updateTodo(@Args('updateTodoInput') updateTodoInput: UpdateTodoInput): Todo {
+    return this.todoService.update(updateTodoInput);
+  }
 
   removeTodo() {}
 }
