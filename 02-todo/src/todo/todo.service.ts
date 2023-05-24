@@ -10,7 +10,21 @@ export class TodoService {
     { id: 1, description: 'Piedra del Alma', done: false },
     { id: 2, description: 'Piedra del Espacio', done: true },
     { id: 3, description: 'Piedra del Poder', done: false },
+    { id: 4, description: 'Piedra del Tiempo', done: false },
   ];
+
+  // Para obtener la cantidad de todos que hay
+  get totalTodos() {
+    return this.todos.length;
+  }
+
+  get completedTodos() {
+    return this.todos.filter((todo) => todo.done === true).length;
+  }
+
+  get pendingTodos() {
+    return this.todos.filter((todo) => todo.done === false).length;
+  }
 
   findAll(statusArgs: StatusArgs): Todo[] {
     if (statusArgs.status !== undefined) {

@@ -44,4 +44,23 @@ export class TodoResolver {
   removeTodo(@Args('id', { type: () => Int }) id: number): boolean {
     return this.todoService.delete(id);
   }
+
+  // Aggregation
+  // Se van a indicar la cantidad de todos que tenemos, los completados y los pendientes
+  // Hay varias formas de hacer esto.
+  // Esta es la más sencilla, con tres queries nuevos.
+  @Query(() => Int, { name: 'totalTodos' })
+  totalTodos() {
+    return this.todoService.totalTodos;
+  }
+
+  @Query(() => Int, { name: 'completedTodos' })
+  completedTodos() {
+    return this.todoService.completedTodos;
+  }
+
+  @Query(() => Int, { name: 'pendingTodos' })
+  pendingTodos() {
+    return this.todoService.pendingTodos;
+  }
 }
