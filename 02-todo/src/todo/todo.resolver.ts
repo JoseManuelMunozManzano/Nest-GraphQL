@@ -75,7 +75,7 @@ export class TodoResolver {
       completed: this.todoService.completedTodos,
       pending: this.todoService.pendingTodos,
       total: this.todoService.totalTodos,
-      totalTodosCompleted: this.todoService.total,
+      totalTodosCompleted: this.todoService.totalTodos,
     };
   }
 }

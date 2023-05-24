@@ -13,6 +13,7 @@ export class AggregationsType {
   @Field(() => Int)
   completed: number;
 
-  @Field(() => Int)
+  // Ejemplo de deprecado
+  @Field(() => Int, { deprecationReason: 'Must use completed instead' })
   totalTodosCompleted: number;
 }

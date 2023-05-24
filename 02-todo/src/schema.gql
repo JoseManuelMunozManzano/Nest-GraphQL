@@ -13,7 +13,7 @@ type AggregationsType {
   total: Int!
   pending: Int!
   completed: Int!
-  totalTodosCompleted: Int!
+  totalTodosCompleted: Int! @deprecated(reason: "Must use completed instead")
 }
 
 type Query {
