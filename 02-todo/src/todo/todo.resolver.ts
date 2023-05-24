@@ -4,6 +4,7 @@ import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { TodoService } from './todo.service';
 import { Todo } from './entities/todo.entity';
 import { CreateTodoInput, UpdateTodoInput, StatusArgs } from './dto';
+import { AggregationsType } from './types/aggregations.type';
 
 // Indicamos, para que no sea tan genérico, que nuestro resolver va a trabajar con un Todo.
 // Es buena práctica.
@@ -62,5 +63,19 @@ export class TodoResolver {
   @Query(() => Int, { name: 'pendingTodos' })
   pendingTodos() {
     return this.todoService.pendingTodos;
+  }
+
+  // La otra forma de realizar Aggregation es usando ObjectTypes.
+  // Así las tendremos en su propio nivel y vendrán los 3 datos agrupados.
+  // Ver aggregations.type.ts
+  // Indicar que es casi preferible la opción anterior por su flexibilidad, pero esta forma también es muy útil.
+  @Query(() => AggregationsType, { name: 'aggregations' })
+  aggregations(): AggregationsType {
+    return {
+      completed: this.todoService.completedTodos,
+      pending: this.todoService.pendingTodos,
+      total: this.todoService.totalTodos,
+      totalTodosCompleted: this.todoService.total,
+    };
   }
 }
