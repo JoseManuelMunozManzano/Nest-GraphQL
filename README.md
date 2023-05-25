@@ -84,20 +84,27 @@ Cosas a ver:
 Es un proyecto de backend de aplicación móvil de lista de supermercado hecho en GraphQL.
 Servirá para aprender sobre relaciones, endpoints autenticados...
 
-Proyecto creado con:
+1. Clonar el proyecto
+2. Copiar el `env.template` y renombrar a `.env`
+3. Ejecutar
 
 ```
-nest new 03-anylist
+yarn install
 ```
 
-Para levantar el proyecto:
+4. Levantar la imagen (Docker desktop)
 
 ```
-cd 03-anylist
+docker-compose up -d
+```
+
+5. Levantar el backend de Nest
+
+```
 yarn start:dev
 ```
 
-Endpoint por defecto:
+6. Visitar el sitio
 
 ```
 http://localhost:3000/graphql
