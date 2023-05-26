@@ -1,11 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateItemInput, CreateItemInput } from './dto/inputs';
 import { Item } from './entities/item.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ItemsService {
+  constructor(
+    // Configurando el repositorio, inyectándolo en el Servicio.
+    @InjectRepository(Item)
+    private readonly itemsRepository: Repository<Item>,
+  ) {}
+
   async create(createItemInput: CreateItemInput): Promise<Item> {
-    return 'This action adds a new item';
+    // Creamos el item (la instancia) pero todavía no está salvado en BD.
+    // Hay que hacerlo en dos pasos porque ahora, en newItem, podríamos querer cambiar algo.
+    const newItem = this.itemsRepository.create(createItemInput);
+    // Grabación en BD
+    return await this.itemsRepository.save(newItem);
   }
 
   findAll() {

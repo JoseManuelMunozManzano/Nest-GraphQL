@@ -18,9 +18,10 @@ export class Item {
   @Field(() => Float)
   quantity: number;
 
-  @Column()
-  @Field(() => String)
-  quantityUnits: string; // g, ml, kg, tsp
+  // Lo ponemos como que puede ir a nulos, a nivel TS, GraphQL y entidad.
+  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  quantityUnits?: string; // g, ml, kg, tsp
 
   // stores
   // user
