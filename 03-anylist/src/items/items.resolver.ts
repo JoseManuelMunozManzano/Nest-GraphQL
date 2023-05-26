@@ -1,15 +1,17 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ItemsService } from './items.service';
 import { Item } from './entities/item.entity';
-import { CreateItemInput } from './dto/create-item.input';
-import { UpdateItemInput } from './dto/update-item.input';
+import { UpdateItemInput, CreateItemInput } from './dto/inputs';
 
 @Resolver(() => Item)
 export class ItemsResolver {
   constructor(private readonly itemsService: ItemsService) {}
 
+  // Cualquier interacción con la BD es asíncrona, por lo que indicamos async - await y como salida Promise<Item>
   @Mutation(() => Item)
-  createItem(@Args('createItemInput') createItemInput: CreateItemInput) {
+  async createItem(
+    @Args('createItemInput') createItemInput: CreateItemInput,
+  ): Promise<Item> {
     return this.itemsService.create(createItemInput);
   }
 
