@@ -1,18 +1,25 @@
 import { Injectable } from '@nestjs/common';
+
 import { SingupInput } from './dto/inputs/signup.input';
 import { AuthResponse } from './types/auth-response.type';
-import { User } from 'src/users/entities/user.entity';
+import { UsersService } from './../users/users.service';
 
 @Injectable()
 export class AuthService {
-  async signup(signupInput: SingupInput): Promise<AuthResponse> {
-    console.log({ signupInput });
-    // Habrá que devolver algo de este tipo
-    // return {
-    //   token: 'mi_token',
-    //   user: new User(),
-    // };
+  // Inyectando UsersService (se ha exportado en users.module.ts e importado en auth.module.ts)
+  // para poder hacer uso del mismo.
+  constructor(private readonly usersService: UsersService) {}
 
-    throw new Error('No implementado');
+  async signup(signupInput: SingupInput): Promise<AuthResponse> {
+    // La creación de los usuarios la vamos a delegar al servicio de los usuarios.
+    const user = await this.usersService.create(signupInput);
+
+    // Todo: crear JWT
+    const token = 'ABC123';
+
+    return {
+      token,
+      user,
+    };
   }
 }

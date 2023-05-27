@@ -6,7 +6,11 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 
+import { UsersModule } from './../users/users.module';
+
 @Module({
   providers: [AuthResolver, AuthService],
+  // Para poder usar UsersService importamos su módulo.
+  imports: [UsersModule],
 })
 export class AuthModule {}

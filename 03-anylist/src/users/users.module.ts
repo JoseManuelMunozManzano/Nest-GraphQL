@@ -13,5 +13,10 @@ import { User } from './entities/user.entity';
   providers: [UsersResolver, UsersService],
   // Para que la entidad se cree automáticamente y se pueda ver en TablePlus, SquirrelSQL...
   imports: [TypeOrmModule.forFeature([User])],
+  exports: [
+    // Para que otro módulo pueda inyectar userRepository, pero por ahora lo dejamos comentado.
+    // TypeOrmModule,
+    UsersService,
+  ],
 })
 export class UsersModule {}
