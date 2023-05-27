@@ -41,3 +41,14 @@ Cosas a ver:
 - TypeORM
 - Entidades con GraphQL Object Types
 - CRUD (Queries y Mutations)
+- Protección de queries y mutations
+- Creación de usuarios desde GraphQL
+- Login
+- Revalidación de token de autenticación
+- JWT
+
+NOTA: Indicar que la autorización y autenticación se hacen con GraphQL para aprender, pero debería hacerse mejor en RESTFul para que solo usuarios autenticados puedan ver la definición de GraphQL.
+
+Si nuestro login y signup están en GraphQL entonces todos los usuarios podrán ver el esquema de GraphQL, ya que necesitarán hacer login.
+
+Para ver como es la autenticación y autorización en REST, mirar: https://github.com/JoseManuelMunozManzano/nest_desarrollo_escalable/tree/main/04-teslo-shop
