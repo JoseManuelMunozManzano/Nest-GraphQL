@@ -45,7 +45,15 @@ export class ItemsService {
     return this.itemsRepository.save(item);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} item`;
+  // Indicar que es mejor marcar como borrado que un borrado físico.
+  async remove(id: string): Promise<Item> {
+    // TODO: soft delete, integridad referencial
+    const item = await this.findOne(id);
+    await this.itemsRepository.remove(item);
+
+    // Devolvemos así porque el id al hacer el remove se pierde. Da el siguiente error:
+    // Cannot return null for non-nullable field item.id
+    // Por tanto devolvemos el id que nos pasan en el body.
+    return { ...item, id };
   }
 }
