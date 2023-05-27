@@ -1,4 +1,5 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { ParseUUIDPipe } from '@nestjs/common';
+import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
 import { ItemsService } from './items.service';
 import { Item } from './entities/item.entity';
 import { UpdateItemInput, CreateItemInput } from './dto/inputs';
@@ -16,12 +17,17 @@ export class ItemsResolver {
   }
 
   @Query(() => [Item], { name: 'items' })
-  findAll() {
+  async findAll(): Promise<Item[]> {
     return this.itemsService.findAll();
   }
 
+  // Indicar que para GraphQL existe el tipo ID.
+  // También se puede mezclar con el Pipe que valida que sea un UUID válido. Con esto, si no mandamos
+  // un UUID obtenemos como response un BAD REQUEST
   @Query(() => Item, { name: 'item' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  async findOne(
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+  ): Promise<Item> {
     return this.itemsService.findOne(id);
   }
 
