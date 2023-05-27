@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 
@@ -27,7 +28,18 @@ export class UsersService {
       // Preparación, pero no graba en BD.
       // Indicar que signupInput tiene 3 campos (email, fullName y password) y los otros que faltan,
       // indicados en User (roles y isActive), tienen indicados valores por defecto.
-      const newUser = this.userRepository.create(signupInput);
+      //
+      // Encriptación de contraseña con hash de una sola vía.
+      // NO tocamos nuestro signupInput!!
+      // Tenemos que instalar el siguiente paquete:
+      //  yarn add bcrypt
+      // Y para TS
+      //  yarn add @types/bcrypt
+      const newUser = this.userRepository.create({
+        ...signupInput,
+        password: bcrypt.hashSync(signupInput.password, 10),
+      });
+
       // Grabación en BD
       return await this.userRepository.save(newUser);
     } catch (error) {
