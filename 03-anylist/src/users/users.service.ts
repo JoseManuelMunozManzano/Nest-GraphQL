@@ -1,15 +1,19 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 
+import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 
 import { SingupInput } from './../auth/dto/inputs/signup.input';
-import { Repository } from 'typeorm';
+import { ErrorHandle } from './../common/error-handle';
 
 @Injectable()
 export class UsersService {
+  // Usamos el manejo de errores
+  private readonly errorHandler: ErrorHandle = new ErrorHandle('UsersService');
+
   // Para hacer la inserción en la BD tenemos que inyectar nuestro repositorio.
   constructor(
     //  @InjectRepository es para que trabaje dentro del ciclo de vida de Nest.
@@ -28,8 +32,7 @@ export class UsersService {
       return await this.userRepository.save(newUser);
     } catch (error) {
       // Aquí llegamos, por ejemplo, si intentamos dar de alta el mismo usuario más de una vez.
-      console.log(error);
-      throw new BadRequestException('Algo salio mal');
+      this.errorHandler.errorHandle(error);
     }
   }
 
