@@ -19,7 +19,11 @@ export class ErrorHandle {
     this.logger.error(`${error} - ${error.detail}`);
 
     if (error.code === '23505') {
-      throw new BadRequestException(error.detail);
+      throw new BadRequestException(error.detail.replace('Key ', ''));
+    }
+
+    if (error.code === 'error-001') {
+      throw new BadRequestException(error.detail.replace('Key ', ''));
     }
 
     throw new InternalServerErrorException(

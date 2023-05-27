@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { SingupInput } from './dto/inputs/signup.input';
+import { SingupInput, LoginInput } from './dto/inputs';
 import { AuthResponse } from './types/auth-response.type';
 
 // Esta parte de autenticación/autorización solo va a trabajar con la parte de creación de usuarios.
@@ -10,7 +10,7 @@ import { AuthResponse } from './types/auth-response.type';
 // De nuevo en nuestro auth.service.ts generaremos un JWT token que vamos a regresar junto con el usuario creado.
 //
 // login()
-// Dado un email y un password, devolveremos el token.
+// Dado un email y un password, devolveremos el token y el usuario.
 //
 // revalidate()
 // Si el token ha expirado podemos devolver un token nuevo.
@@ -42,10 +42,14 @@ export class AuthResolver {
   }
 
   // El login lo vamos a validar con JWT
-  // @Mutation(/** ???? */, {name: 'login'})
-  // async login(/** logininput */):Promise</** ???? */> {
-  //   return this.authService.login(/** ??? */);
-  // }
+  // El input de entrada ese llama LoginInput.
+  // El valor de retorno es algo de tipo AuthResponse.
+  @Mutation(() => AuthResponse, { name: 'login' })
+  async login(
+    @Args('loginInput') loginInput: LoginInput,
+  ): Promise<AuthResponse> {
+    return this.authService.login(loginInput);
+  }
 
   // Revalidar el token
   // @Query(/**??? */, {name: 'revalidate'})

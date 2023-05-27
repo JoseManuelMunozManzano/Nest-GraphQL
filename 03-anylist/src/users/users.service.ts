@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 
@@ -52,8 +52,20 @@ export class UsersService {
     return [];
   }
 
-  async findOne(id: string): Promise<User> {
-    throw new Error(`findOne() not implemented`);
+  async findOneByEmail(email: string): Promise<User> {
+    try {
+      // Si no encuentra el usuario, con el OrFail vamos directos al catch.
+      return await this.userRepository.findOneByOrFail({ email });
+    } catch (error) {
+      // Forma normal de tratar la excepción.
+      throw new NotFoundException(`${email} not found`);
+
+      // Otra forma de manejar el error. Es muy flexible y nos da mucho poder para hacer lo que queramos.
+      // this.errorHandler.errorHandle({
+      //   code: 'error-001',
+      //   detail: `${email} not found`,
+      // });
+    }
   }
 
   update(id: number, updateUserInput: UpdateUserInput) {
