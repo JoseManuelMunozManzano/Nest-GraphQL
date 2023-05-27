@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 import { ItemsModule } from './items/items.module';
+import { UsersModule } from './users/users.module';
 
 // Indicar que se pueden mezclar controladores con GraphQL.
 // Se puede tener un controlador (un endpoint) que sea /graphql y dentro tener todas nuestras queries y mutations.
@@ -46,6 +47,8 @@ import { ItemsModule } from './items/items.module';
     }),
 
     ItemsModule,
+
+    UsersModule,
   ],
   controllers: [],
   providers: [],
