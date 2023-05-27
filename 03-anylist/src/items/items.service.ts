@@ -34,8 +34,15 @@ export class ItemsService {
     return item;
   }
 
-  update(id: number, updateItemInput: UpdateItemInput) {
-    return `This action updates a #${id} item`;
+  async update(id: string, updateItemInput: UpdateItemInput): Promise<Item> {
+    // Con preload busca por el id y carga toda la entidad con las modificaciones.
+    // También se podría haber hecho buscando en nuestro método findOne.
+    const item = await this.itemsRepository.preload(updateItemInput);
+
+    if (!item) throw new NotFoundException(`Item with id: ${id} not found!`);
+
+    // con save ya actualizamos realmente.
+    return this.itemsRepository.save(item);
   }
 
   remove(id: number) {
