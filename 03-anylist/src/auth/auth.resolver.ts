@@ -1,5 +1,7 @@
-import { Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
+import { SingupInput } from './dto/inputs/signup.input';
+import { AuthResponse } from './types/auth-response.type';
 
 // Esta parte de autenticación/autorización solo va a trabajar con la parte de creación de usuarios.
 // signup()
@@ -25,21 +27,29 @@ import { AuthService } from './auth.service';
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(/** ???? */, {name: 'signup'})
-  async signup(/** signupinput */):Promise</** ???? */> {
-    return this.authService.signup(/** ??? */);
+  // En un mutation estamos esperando datos, tenemos que saber como luce esa información y por tanto
+  // hablamos de dto, que en GraphQL son llamados input y que indicamos en el decorador @Args()
+  // Nota: se ha creado la clase SignupInput
+  //
+  // La información que vamos a retornar, indicada en @Mutation y en la salida del método (para TS) serán los campos
+  // que nos pueden solicitar desde el front. Para esto creamos un custom object type.
+  // Nota: se ha creado la clase AuthResponse
+  @Mutation(() => AuthResponse, { name: 'signup' })
+  async signup(
+    @Args('signupInput') signupInput: SingupInput,
+  ): Promise<AuthResponse> {
+    return this.authService.signup(signupInput);
   }
 
   // El login lo vamos a validar con JWT
-  @Mutation(/** ???? */, {name: 'login'})
-  async login(/** logininput */):Promise</** ???? */> {
-    return this.authService.login(/** ??? */);
-  }
+  // @Mutation(/** ???? */, {name: 'login'})
+  // async login(/** logininput */):Promise</** ???? */> {
+  //   return this.authService.login(/** ??? */);
+  // }
 
   // Revalidar el token
-  @Query(/**??? */, {name: 'revalidate'})
-  async revalidateToken() {
-    return this.authService.revalidateToken(/** ??? */)
-  }
-
+  // @Query(/**??? */, {name: 'revalidate'})
+  // async revalidateToken() {
+  //   return this.authService.revalidateToken(/** ??? */)
+  // }
 }
