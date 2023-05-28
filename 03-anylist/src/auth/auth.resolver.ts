@@ -1,5 +1,9 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+
 import { SingupInput, LoginInput } from './dto/inputs';
 import { AuthResponse } from './types/auth-response.type';
 
@@ -52,8 +56,24 @@ export class AuthResolver {
   }
 
   // Revalidar el token
-  // @Query(/**??? */, {name: 'revalidate'})
-  // async revalidateToken() {
-  //   return this.authService.revalidateToken(/** ??? */)
-  // }
+  // Queremos regresar nuestro AuthResponse (usuario y token)
+  //
+  // Para autenticación en RESTFul utilizábamos @UserGuards(AuthGuard()) pero esto no funciona aquí.
+  // Vamos a crear nuestro propio AuthGuard basado en el que nos pasa la gente de passport.
+  // Ver jwt-auth.guard.ts
+  // Una vez hecho, si lanzamos en Apollo el revalidate obtendremos un 401 Unauthorized.
+  // Esto es correcto, porque estamos pidiendo un JWT y no lo estamos facilitando.
+  // En Apollo, al hacer la petición, ir a la pestaña Headers y, tras hacer un login, coger el token
+  // y ponerlo en Set shared headers.
+  // La key es Authorization y el value es la palabra Bearer seguido de un espacio y el token que nos
+  // ha dado el login.
+  // Tras volver a ejecutar el revalidate vuelve a dar un error Token not valid :( porque nos falta
+  // confirmar quien es el usuario, si está activo y tiene permisos para entrar a ese recurso.
+  // Nos falta, en jwt.strategy.ts, en el método validate, coger del payload el usuario y validarlo.
+  @Query(() => AuthResponse, { name: 'revalidate' })
+  @UseGuards(JwtAuthGuard)
+  revalidateToken(/**  @CurrentUser user: User*/): AuthResponse {
+    //return this.authService.revalidateToken();
+    throw new Error('Not implemented');
+  }
 }
