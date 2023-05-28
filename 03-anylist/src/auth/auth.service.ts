@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import * as bcrypt from 'bcrypt';
 
@@ -10,14 +11,25 @@ import { UsersService } from './../users/users.service';
 export class AuthService {
   // Inyectando UsersService (se ha exportado en users.module.ts e importado en auth.module.ts)
   // para poder hacer uso del mismo.
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    // Para poder firmar nuestro JWT Tokens
+    private readonly jwtService: JwtService,
+  ) {}
+
+  private getJwtToken(userId: string) {
+    return this.jwtService.sign({ id: userId });
+  }
 
   async signup(signupInput: SingupInput): Promise<AuthResponse> {
     // La creación de los usuarios la vamos a delegar al servicio de los usuarios.
     const user = await this.usersService.create(signupInput);
 
-    // Todo: crear JWT
-    const token = 'ABC123';
+    // Crear JWT con nuestro id.
+    // Solo con el id ya puedo saber todo sobre el usuario que intenta acceder.
+    // Hasta donde se pueda, grabar lo mínimo posible en el JWT ya que el payload es muy fácil de ver y viaja
+    // en la petición (en nuestro header como un bearer token)
+    const token = this.getJwtToken(user.id);
 
     return {
       token,
@@ -37,8 +49,8 @@ export class AuthService {
       throw new BadRequestException('Email/Password do not match');
     }
 
-    // Todo: crear JWT
-    const token = 'ABC123';
+    // Crear JWT con nuestro id.
+    const token = this.getJwtToken(user.id);
 
     return {
       token,
