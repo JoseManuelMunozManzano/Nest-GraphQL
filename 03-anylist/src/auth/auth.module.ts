@@ -13,8 +13,10 @@
 //   yarn add -D @types/passport-jwt
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
@@ -22,7 +24,8 @@ import { AuthResolver } from './auth.resolver';
 import { UsersModule } from './../users/users.module';
 
 @Module({
-  providers: [AuthResolver, AuthService],
+  providers: [AuthResolver, AuthService, JwtStrategy],
+  exports: [JwtStrategy, PassportModule, JwtModule],
   // Para poder usar UsersService importamos su módulo.
   imports: [
     // Configuración del módulo principal (passport) para especificar como queremos que se validen nuestros JWT
