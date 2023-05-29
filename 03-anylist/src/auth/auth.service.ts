@@ -76,4 +76,18 @@ export class AuthService {
 
     return user;
   }
+
+  // No devuelve una promesa porque no necesito hacer nada asíncrono
+  revalidateToken(user: User): AuthResponse {
+    // Para cumplir la firma de AuthResponse
+
+    // Este es el token
+    const token = this.getJwtToken(user.id);
+
+    // Y aquí devolvemos el token y el usuario
+    return {
+      token,
+      user,
+    };
+  }
 }
