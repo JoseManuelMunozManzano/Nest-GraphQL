@@ -38,6 +38,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Hay excepciones en validateUser.
     const user = await this.authService.validateUser(id);
 
-    return user;
+    return user; // Esto se va a poder obtener como req.user
   }
 }

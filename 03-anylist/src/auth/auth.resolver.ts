@@ -6,6 +6,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 import { SingupInput, LoginInput } from './dto/inputs';
 import { AuthResponse } from './types/auth-response.type';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { User } from '../users/entities/user.entity';
 
 // Esta parte de autenticación/autorización solo va a trabajar con la parte de creación de usuarios.
 // signup()
@@ -70,10 +72,18 @@ export class AuthResolver {
   // Tras volver a ejecutar el revalidate vuelve a dar un error Token not valid :( porque nos falta
   // confirmar quien es el usuario, si está activo y tiene permisos para entrar a ese recurso.
   // Nos falta, en jwt.strategy.ts, en el método validate, coger del payload el usuario y validarlo.
+  //
+  // Esto es lo único que ahora mismo requiere autenticación.
+  // Luego haremos que toda la aplicación requiera autenticación.
+  //
+  // Para nuestro AuthResponse necesitamos saber el token (fácil porque con el id del usuario generaré un nuevo JWT)
+  // Lo difícil es saber qué usuario es. Para obtener el usuario vamos a hacer un decorador llamado @CurrentUser
   @Query(() => AuthResponse, { name: 'revalidate' })
   @UseGuards(JwtAuthGuard)
-  revalidateToken(/**  @CurrentUser user: User*/): AuthResponse {
+  revalidateToken(@CurrentUser() user: User): AuthResponse {
     //return this.authService.revalidateToken();
+    console.log('revalidate token, user:', user);
+
     throw new Error('Not implemented');
   }
 }
