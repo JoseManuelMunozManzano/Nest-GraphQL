@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import * as bcrypt from 'bcrypt';
@@ -6,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { SingupInput, LoginInput } from './dto/inputs';
 import { AuthResponse } from './types/auth-response.type';
 import { UsersService } from './../users/users.service';
+import { User } from './../users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -56,5 +61,19 @@ export class AuthService {
       token,
       user,
     };
+  }
+
+  // Validación del usuario
+  async validateUser(id: string): Promise<User> {
+    // Si no se encuentra, en el mismo findOneById ya tenemos un throw para lanzar la excepción.
+    const user = await this.usersService.findOneById(id);
+
+    if (!user.isActive)
+      throw new UnauthorizedException(`User is inactive, talk with an admin`);
+
+    // Para asegurarnos que el password no pasa en el request.
+    delete user.password;
+
+    return user;
   }
 }

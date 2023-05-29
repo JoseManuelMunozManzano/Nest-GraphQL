@@ -4,6 +4,7 @@ import { User } from './entities/user.entity';
 
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 
@@ -65,6 +66,16 @@ export class UsersService {
       //   code: 'error-001',
       //   detail: `${email} not found`,
       // });
+    }
+  }
+
+  async findOneById(id: string): Promise<User> {
+    try {
+      // Si no encuentra el usuario, con el OrFail vamos directos al catch.
+      return await this.userRepository.findOneByOrFail({ id });
+    } catch (error) {
+      // Forma normal de tratar la excepción.
+      throw new NotFoundException(`${id} not found`);
     }
   }
 
