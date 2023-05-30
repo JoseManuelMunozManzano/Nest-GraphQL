@@ -121,6 +121,14 @@ Cosas a ver:
 - Login
 - Revalidación de token de autenticación
 - JWT
+- Relaciones ManyToOne a la misma tabla
+- Actualización de usuarios
+- Bloqueo de usuarios
+- Protección del GqlSchema
+- Módulos asíncronos
+- Factory functions
+- Uso de módulos en factory functions
+- Roles y actualización de usuario que modifica registros
 
 NOTA: Indicar que la autorización y autenticación se hacen con GraphQL para aprender, pero debería hacerse mejor en RESTFul para que solo usuarios autenticados puedan ver la definición de GraphQL.
 
