@@ -8,7 +8,6 @@ import { SingupInput, LoginInput } from './dto/inputs';
 import { AuthResponse } from './types/auth-response.type';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
-import { ValidRoles } from './enums/valid-roles.enum';
 
 // Esta parte de autenticación/autorización solo va a trabajar con la parte de creación de usuarios.
 // signup()
@@ -30,7 +29,10 @@ import { ValidRoles } from './enums/valid-roles.enum';
 // Esto vamos a tener que pasarlo.
 // Según la documentación de Nest hay que evitar hasta donde sea posible este tipo de dependencias cíclicas, pero
 // aquí vamos a tener un caso donde es necesario hacerlo.
-@Resolver()
+//
+// Como todos nuestros Mutations devuelven un AuthResponse, es bueno indicarlo en nuestro @Resolver.
+// Esto ayuda en GraphQL y en la documentación de Apollo, para los desarrolladores del front.
+@Resolver(() => AuthResponse)
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
@@ -87,7 +89,9 @@ export class AuthResolver {
   // Si lo mandamos vacío signifca que cualquier persona puede entrar en revalidateToken.
   @Query(() => AuthResponse, { name: 'revalidate' })
   @UseGuards(JwtAuthGuard)
-  revalidateToken(@CurrentUser([ValidRoles.admin]) user: User): AuthResponse {
+  revalidateToken(
+    @CurrentUser(/* [ValidRoles.admin] */) user: User,
+  ): AuthResponse {
     return this.authService.revalidateToken(user);
   }
 }
