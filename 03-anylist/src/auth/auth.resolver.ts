@@ -8,6 +8,7 @@ import { SingupInput, LoginInput } from './dto/inputs';
 import { AuthResponse } from './types/auth-response.type';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
+import { ValidRoles } from './enums/valid-roles.enum';
 
 // Esta parte de autenticación/autorización solo va a trabajar con la parte de creación de usuarios.
 // signup()
@@ -78,9 +79,15 @@ export class AuthResolver {
   //
   // Para nuestro AuthResponse necesitamos saber el token (fácil porque con el id del usuario generaré un nuevo JWT)
   // Lo difícil es saber qué usuario es. Para obtener el usuario vamos a hacer un decorador llamado @CurrentUser
+  //
+  // Para autorización:
+  // Nuestro decorador @CurrentUser puede enviar roles de usuario, que luego usará el mismo decorador para
+  // validar que el usuario tiene ese rol. En este caso estamos mandando el rol admin (se creo el enumerado de roles posibles)
+  // para indicar que solo el rol admin va a poder ejecutar el revalidateToken.
+  // Si lo mandamos vacío signifca que cualquier persona puede entrar en revalidateToken.
   @Query(() => AuthResponse, { name: 'revalidate' })
   @UseGuards(JwtAuthGuard)
-  revalidateToken(@CurrentUser() user: User): AuthResponse {
+  revalidateToken(@CurrentUser([ValidRoles.admin]) user: User): AuthResponse {
     return this.authService.revalidateToken(user);
   }
 }
