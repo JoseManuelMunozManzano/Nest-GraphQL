@@ -1,11 +1,20 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
+
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { ValidRolesArgs } from './dto/args/roles.arg';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { ValidRoles } from '../auth/enums/valid-roles.enum';
+
+// Protección de ruta a nivel de clase usando @UseGuards. Solo usuarios autenticados.
 @Resolver(() => User)
+@UseGuards(JwtAuthGuard)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
@@ -22,8 +31,14 @@ export class UsersResolver {
   // que indicar el nombre, de la siguiente forma: @Args('validRoles')
   // Como el tipo es uno personalizado, ValidRolesArgs, no hace falta hacer esto en @Args porque el nombre
   // ya aparece en VaridRolesArgs.
+  //
+  // Solo usuarios con rol admin pueden hacer el findAll()
+  // Para esto usamos nuestro @CurrentUser indicando el rol.
   @Query(() => [User], { name: 'users' })
-  findAll(@Args() validRoles: ValidRolesArgs): Promise<User[]> {
+  findAll(
+    @Args() validRoles: ValidRolesArgs,
+    @CurrentUser([ValidRoles.admin]) user: User,
+  ): Promise<User[]> {
     console.log({ validRoles });
     return this.usersService.findAll(validRoles.roles);
   }
