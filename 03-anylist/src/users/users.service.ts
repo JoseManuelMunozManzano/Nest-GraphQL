@@ -102,6 +102,11 @@ export class UsersService {
   }
 
   async block(id: string): Promise<User> {
-    throw new Error(`block() not implemented`);
+    const userToBlock = await this.findOneById(id);
+
+    // Siempre va a bloquear, independientemente de que ya esté bloqueado.
+    userToBlock.isActive = false;
+
+    return await this.userRepository.save(userToBlock);
   }
 }

@@ -1,5 +1,11 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'users' })
 @ObjectType()
@@ -36,5 +42,18 @@ export class User {
   @Field(() => Boolean)
   isActive: boolean;
 
-  // TODO: relaciones y otras cosas...
+  // TODO: relaciones
+  // La relación en este campo es la siguiente:
+  // Muchos updates pueden estar hechos por una persona.
+  // Esto es nuevo en el sentido de que no habíamos hecho en el curso de Nest con REST un @ManyToOne en la misma tabla.
+  // nullable a true porque al principio está nula (no tiene sentido en el alta indicar este campo)
+  //
+  // Con @JoinColumn() indicamos que queremos que siempre se recupere el campo y el nombre del campo (si no por defecto
+  // nos indica lastUpdateById)
+  //
+  // Esto es suficiente para TypeOrm, pero GrapthQL indicaremos que es un @Field y que es nullable.
+  @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true })
+  @JoinColumn({ name: 'lastUpdateBy' })
+  @Field(() => User, { nullable: true })
+  lastUpdateBy?: User;
 }
