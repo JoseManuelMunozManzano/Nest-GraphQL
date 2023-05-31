@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { ValidRoles } from './../auth/enums/valid-roles.enum';
 
 import { SingupInput } from './../auth/dto/inputs/signup.input';
 import { ErrorHandle } from './../common/error-handle';
@@ -49,8 +50,25 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
-    return [];
+  async findAll(roles: ValidRoles[]): Promise<User[]> {
+    if (roles.length === 0) return this.userRepository.find();
+
+    //? Tenemos roles ['admin', 'superUser', ...]
+    // Con createQueryBuilder tenemos más control a la hora de hacer las peticiones.
+    // getMany() es como el find() para traer el resultado del query builder.
+    // Para las consultas de postgresql ver: https://www.postgresql.org/docs/9.6/functions-array.html
+    // Es en concreto para hacer búsquedas en arreglos.
+    return (
+      this.userRepository
+        .createQueryBuilder()
+        // el primer roles es el campo de la BD y el segundo son los roles que mando por parámetro.
+        .andWhere('ARRAY[roles] && ARRAY[:...roles]')
+        // Con setParameter podemos escapar caracteres especiales, evitar inyecciones de query...
+        // El roles escrito entre comillas se refiere al ARRAY[:...roles] y el segundo roles es
+        // el mandado por parámetro.
+        .setParameter('roles', roles)
+        .getMany()
+    );
   }
 
   async findOneByEmail(email: string): Promise<User> {

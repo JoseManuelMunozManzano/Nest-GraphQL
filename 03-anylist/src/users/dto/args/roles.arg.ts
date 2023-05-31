@@ -13,7 +13,9 @@ export class ValidRolesArgs {
   // tenemos que trabajar con tipos propios o tipos personalizados de GraphQL.
   // Por eso tenemos que hacer que ValidRoles, una enumeración TypeScript, sea también una enumeración
   // GraphQL.
+  //
+  // Nos faltaba decirle a TS que roles es de tipo ValidRoles.
   @Field(() => [ValidRoles], { nullable: true })
   @IsArray()
-  roles: string[] = [];
+  roles: ValidRoles[] = [];
 }
