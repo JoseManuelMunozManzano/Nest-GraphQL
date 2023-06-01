@@ -55,6 +55,11 @@ Cosas a ver:
 - Uso de módulos en factory functions
 - Roles y actualización de usuario que modifica registros
 - Bloquear GQLSchema
+- Relaciones user - item
+- Validaciones
+- Consultas por usuario
+- Indices
+- LazyRelationships
 
 NOTA: Indicar que la autorización y autenticación se hacen con GraphQL para aprender, pero debería hacerse mejor en RESTFul para que solo usuarios autenticados puedan ver la definición de GraphQL.
 
