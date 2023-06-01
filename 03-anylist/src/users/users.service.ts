@@ -51,13 +51,20 @@ export class UsersService {
   }
 
   async findAll(roles: ValidRoles[]): Promise<User[]> {
-    if (roles.length === 0) return this.userRepository.find();
+    // Cargar la relación lastUpdatedBy usando relations
+    // NOTA: Indicando lazy a true en la propiedad lastUpdateBy en user.entity.ts no hace falta, pero hay que saber esta forma
+    // de cargar relaciones.
+    if (roles.length === 0)
+      return this.userRepository.find(/* { relations: { lastUpdateBy: true } } */);
 
     //? Tenemos roles ['admin', 'superUser', ...]
     // Con createQueryBuilder tenemos más control a la hora de hacer las peticiones.
     // getMany() es como el find() para traer el resultado del query builder.
     // Para las consultas de postgresql ver: https://www.postgresql.org/docs/9.6/functions-array.html
     // Es en concreto para hacer búsquedas en arreglos.
+    //
+    // Cargar la relación lastUpdatedBy cuando hay roles. Se ha modificado user.entity.ts
+    // Otra forma de solucionar esto sería modificar este QueryBuilder para seleccionarlo.
     return (
       this.userRepository
         .createQueryBuilder()
@@ -101,11 +108,12 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  async block(id: string): Promise<User> {
+  async block(id: string, adminUser: User): Promise<User> {
     const userToBlock = await this.findOneById(id);
 
     // Siempre va a bloquear, independientemente de que ya esté bloqueado.
     userToBlock.isActive = false;
+    userToBlock.lastUpdateBy = adminUser;
 
     return await this.userRepository.save(userToBlock);
   }

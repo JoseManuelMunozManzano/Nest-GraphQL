@@ -52,7 +52,18 @@ export class User {
   // nos indica lastUpdateById)
   //
   // Esto es suficiente para TypeOrm, pero GrapthQL indicaremos que es un @Field y que es nullable.
-  @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true })
+  //
+  // Para que se cargue la relación en el método findAll, en concreto cuando hay roles, se indica eager a true.
+  // Esto funciona excepto en un QueryBuilder.
+  // El problema es que la carga es de una sola vía, de una tabla a otra, NO en la misma tabla, como este caso.
+  //
+  // Por tanto, para que nos funcione en la misma tabla y además compatible con QueryBuilder, usaremos lazy a true.
+  // https://orkhan.gitbook.io/typeorm/docs/eager-and-lazy-relations
+  @ManyToOne(() => User, (user) => user.lastUpdateBy, {
+    nullable: true,
+    //eager: true,
+    lazy: true,
+  })
   @JoinColumn({ name: 'lastUpdateBy' })
   @Field(() => User, { nullable: true })
   lastUpdateBy?: User;
