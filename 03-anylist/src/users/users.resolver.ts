@@ -50,6 +50,14 @@ export class UsersResolver {
     return this.usersService.findOneById(id);
   }
 
+  @Mutation(() => User, { name: 'updateUser' })
+  async updateUser(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+    @CurrentUser([ValidRoles.admin]) user: User,
+  ): Promise<User> {
+    return this.usersService.update(updateUserInput.id, updateUserInput, user);
+  }
+
   @Mutation(() => User, { name: 'blockUser' })
   blockUser(
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
