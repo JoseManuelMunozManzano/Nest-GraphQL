@@ -75,7 +75,9 @@ export class User {
   // Se indica el campo con el que se va a establecer la relación (item.user en este caso)
   //
   // Parte typeorm
-  @OneToMany(() => Item, (item) => item.user)
+  // Lo de lazy a true no tiene mucho sentido porque generalmente no vamos a querer cargar
+  // los items de los usuarios, pero para aprender, vamos a recuperarlos. Luego lo deshabilitaremos.
+  @OneToMany(() => Item, (item) => item.user, { lazy: true })
   // Parte GraphQL
   @Field(() => [Item])
   items: Item[];
