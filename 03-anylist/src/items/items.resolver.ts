@@ -29,8 +29,8 @@ export class ItemsResolver {
   }
 
   @Query(() => [Item], { name: 'items' })
-  async findAll(): Promise<Item[]> {
-    return this.itemsService.findAll();
+  async findAll(@CurrentUser() user: User): Promise<Item[]> {
+    return this.itemsService.findAll(user);
   }
 
   // Indicar que para GraphQL existe el tipo ID.
