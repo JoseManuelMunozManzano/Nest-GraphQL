@@ -45,7 +45,34 @@ export class Item {
   // Esto es un constraint (una regla)
   // Para temas de rendimiento (si hay millones de usuarios por ejemplo) se añade un índice.
   // https://orkhan.gitbook.io/typeorm/docs/indices
-  @ManyToOne(() => User, (user) => user.items, { nullable: false })
+  //
+  // Eager Loading
+  // El patrón de diseño Eager Loading consiste en la asociación de modelos relacionados para un determinado conjunto de
+  // resultados con solo la ejecución de una consulta, en lugar de tener que ejecutar N consultas, donde N es el número de
+  // elementos en el conjunto inicial.
+  //
+  // ¿Cuando debemos usar Eager Loading?
+  //
+  // -En «un lado» de las relaciones de uno a muchos y si estás seguro que se usará en todas partes con la entidad principal. Por
+  // ejemplo, el usuario de un artículo o la categoría de un producto.
+  //
+  // -Cuando las relaciones no son demasiadas, ya que es una buena práctica utilizar Eager Loading para reducir las consultas en
+  // el servidor.
+  //
+  // Lazy Loading
+  //
+  // El patrón de diseño Lazy Loading consiste en retrasar la carga o inicialización de un objeto hasta el mismo momento de su
+  // requerimiento. Esto contribuye a la eficiencia de los programas, evitando la precarga de datos que podrían no llegar a
+  // utilizarse.
+  //
+  // ¿Cuando debemos usar Lazy Loading?
+  //
+  // -Frecuentemente es usado en el «lado de la colección» de las relaciones de uno a muchos, como artículos de un usuario o
+  //productos de una categoría.
+  //
+  // -Cuando sabes exactamente que no necesitarás una propiedad al instante, con esta acción evitas una consulta más larga y solo
+  // solicitas los datos de la relación cuando sean necesarios.
+  @ManyToOne(() => User, (user) => user.items, { nullable: false, lazy: true })
   @Index('userId-index')
   // Parte GraphQL
   @Field(() => User)

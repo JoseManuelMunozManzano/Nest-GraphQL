@@ -39,8 +39,9 @@ export class ItemsResolver {
   @Query(() => Item, { name: 'item' })
   async findOne(
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser() user: User,
   ): Promise<Item> {
-    return this.itemsService.findOne(id);
+    return this.itemsService.findOne(id, user);
   }
 
   @Mutation(() => Item)
@@ -53,7 +54,8 @@ export class ItemsResolver {
   @Mutation(() => Item)
   async removeItem(
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser() user: User,
   ): Promise<Item> {
-    return this.itemsService.remove(id);
+    return this.itemsService.remove(id, user);
   }
 }

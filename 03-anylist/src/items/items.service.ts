@@ -32,7 +32,8 @@ export class ItemsService {
     // TODO: filtrar, paginar, por usuario...
     // Traemos todos los items del usuario
     return await this.itemsRepository.find({
-      relations: { user: true },
+      // Habiendo indicado lazy a true en item.entity.ts esto ya no haría falta.
+      //relations: { user: true },
       where: {
         user: {
           id: user.id,
@@ -41,10 +42,22 @@ export class ItemsService {
     });
   }
 
-  async findOne(id: string): Promise<Item> {
-    const item = await this.itemsRepository.findOneBy({ id });
+  async findOne(id: string, user: User): Promise<Item> {
+    const item = await this.itemsRepository.findOneBy({
+      id,
+      user: {
+        id: user.id,
+      },
+    });
 
     if (!item) throw new NotFoundException(`Item with id: ${id} not found!`);
+
+    // Para traer el user en la query en GraphQL.
+    // Forma sencilla, rápida, pero fea
+    //
+    // item.user = user;
+    //
+    // La otra forma es indicar lazy a true en item.entity.ts
 
     return item;
   }
@@ -61,9 +74,9 @@ export class ItemsService {
   }
 
   // Indicar que es mejor marcar como borrado que un borrado físico.
-  async remove(id: string): Promise<Item> {
+  async remove(id: string, user: User): Promise<Item> {
     // TODO: soft delete, integridad referencial
-    const item = await this.findOne(id);
+    const item = await this.findOne(id, user);
     await this.itemsRepository.remove(item);
 
     // Devolvemos así porque el id al hacer el remove se pierde. Da el siguiente error:
