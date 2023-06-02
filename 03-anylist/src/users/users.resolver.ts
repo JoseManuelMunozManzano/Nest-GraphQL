@@ -1,10 +1,20 @@
 import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Int,
+  Parent,
+} from '@nestjs/graphql';
 
 import { UsersService } from './users.service';
+import { ItemsService } from '../items/items.service';
+
 import { User } from './entities/user.entity';
 
-import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { ValidRolesArgs } from './dto/args/roles.arg';
 
@@ -16,7 +26,10 @@ import { ValidRoles } from '../auth/enums/valid-roles.enum';
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly itemsService: ItemsService,
+  ) {}
 
   // Esto deberá estar validado y será para roles de administrador.
   //
@@ -64,5 +77,27 @@ export class UsersResolver {
     @CurrentUser([ValidRoles.admin]) user: User,
   ): Promise<User> {
     return this.usersService.block(id, user);
+  }
+
+  // Vamos a hacer una pequeña modificación a nuestro esquema para indicarle que hay una nueva propiedad calculada
+  // que puede ser consultada (la cantidad de items por usuario)
+  // Cuando alquien consulta esa propiedad en Apollo, GraphQL me va a decir el método que se va a ejecutar cuando
+  // se reciba esa solicitud (itemCount()).
+  // NO ESTA EN BD, ES CALCULADO!!!
+  //
+  // ¿Cómo sabemos el usuario? Como este campo se encuentra dentro del objeto users (su padre), nosotros tenemos
+  // acceso a toda su información en cualquiera de las propiedades que creemos.
+  // Para obtener esa información se usa el decorador @Parent
+  //
+  // Si en GraphQL no se pide este campo (itemCount) entonces este método no se ejecuta.
+  // Y como está atado al usuario, en cualquier query donde este el user, podremos pedir la información de este campo,
+  // por ejemplo en la query findOneItem
+  @ResolveField(() => Int, { name: 'itemCount' })
+  async itemCount(
+    @CurrentUser() adminUser: User,
+    @Parent() user: User,
+  ): Promise<number> {
+    // Hemos inyectado itemsService porque esta cuenta de items le corresponde hacerlo al módulo de items.
+    return this.itemsService.itemCountByUser(user);
   }
 }

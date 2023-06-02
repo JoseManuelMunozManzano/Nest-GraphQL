@@ -94,4 +94,14 @@ export class ItemsService {
     // Por tanto devolvemos el id que nos pasan en el body.
     return { ...item, id };
   }
+
+  async itemCountByUser(user: User): Promise<number> {
+    return this.itemsRepository.count({
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
+  }
 }

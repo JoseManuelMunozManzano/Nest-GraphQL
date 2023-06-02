@@ -8,11 +8,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
 import { UsersResolver } from './users.resolver';
 import { User } from './entities/user.entity';
+import { ItemsModule } from 'src/items/items.module';
 
 @Module({
   providers: [UsersResolver, UsersService],
   // Para que la entidad se cree automáticamente y se pueda ver en TablePlus, SquirrelSQL...
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]), ItemsModule],
   exports: [
     // Para que otro módulo pueda inyectar userRepository, pero por ahora lo dejamos comentado.
     // TypeOrmModule,
