@@ -1,5 +1,11 @@
-import { ObjectType, Field, ID, Float } from '@nestjs/graphql';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import {
+  Column,
+  Entity,
+  Index,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { User } from './../../users/entities/user.entity';
 
@@ -35,7 +41,12 @@ export class Item {
   // Se indica el campo con el que se va a establecer la relación (user.items en este caso)
   //
   // Parte typeorm
-  @ManyToOne(() => User, (user) => user.items)
+  // Se indica que no puede ser nulo el usuario, es decir, el item tiene que pertenecer si o si a un user.
+  // Esto es un constraint (una regla)
+  // Para temas de rendimiento (si hay millones de usuarios por ejemplo) se añade un índice.
+  // https://orkhan.gitbook.io/typeorm/docs/indices
+  @ManyToOne(() => User, (user) => user.items, { nullable: false })
+  @Index('userId-index')
   // Parte GraphQL
   @Field(() => User)
   user: User;

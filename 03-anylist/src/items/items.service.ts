@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateItemInput, CreateItemInput } from './dto/inputs';
-import { Item } from './entities/item.entity';
 import { Repository } from 'typeorm';
+
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateItemInput, CreateItemInput } from './dto/inputs';
+
+import { Item } from './entities/item.entity';
+import { User } from './../users/entities/user.entity';
 
 @Injectable()
 export class ItemsService {
@@ -12,10 +15,15 @@ export class ItemsService {
     private readonly itemsRepository: Repository<Item>,
   ) {}
 
-  async create(createItemInput: CreateItemInput): Promise<Item> {
+  async create(createItemInput: CreateItemInput, user: User): Promise<Item> {
     // Creamos el item (la instancia) pero todavía no está salvado en BD.
     // Hay que hacerlo en dos pasos porque ahora, en newItem, podríamos querer cambiar algo.
-    const newItem = this.itemsRepository.create(createItemInput);
+    //
+    // La mejor forma de añadir el usuario es con desestructuración.
+    const newItem = this.itemsRepository.create({
+      ...createItemInput,
+      user,
+    });
     // Grabación en BD
     return await this.itemsRepository.save(newItem);
   }
