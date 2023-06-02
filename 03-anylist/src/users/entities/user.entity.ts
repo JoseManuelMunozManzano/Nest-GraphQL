@@ -4,8 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+import { Item } from './../../items/entities/item.entity';
 
 @Entity({ name: 'users' })
 @ObjectType()
@@ -67,4 +70,13 @@ export class User {
   @JoinColumn({ name: 'lastUpdateBy' })
   @Field(() => User, { nullable: true })
   lastUpdateBy?: User;
+
+  // En el lado de User, un usuario puede tener muchos items.
+  // Se indica el campo con el que se va a establecer la relación (item.user en este caso)
+  //
+  // Parte typeorm
+  @OneToMany(() => Item, (item) => item.user)
+  // Parte GraphQL
+  @Field(() => [Item])
+  items: Item[];
 }
