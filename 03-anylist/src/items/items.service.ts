@@ -62,9 +62,19 @@ export class ItemsService {
     return item;
   }
 
-  async update(id: string, updateItemInput: UpdateItemInput): Promise<Item> {
+  async update(
+    id: string,
+    updateItemInput: UpdateItemInput,
+    user: User,
+  ): Promise<Item> {
+    // Hay que hacer 2 consultas a la BD.
+    await this.findOne(id, user);
+
     // Con preload busca por el id y carga toda la entidad con las modificaciones.
     // También se podría haber hecho buscando en nuestro método findOne.
+    //
+    // Sin hacer el lazy en user, se podría precargar el usuario de la siguiente forma:
+    // const item = await this.itemsRepository.preload({...updateItemInput, user});
     const item = await this.itemsRepository.preload(updateItemInput);
 
     if (!item) throw new NotFoundException(`Item with id: ${id} not found!`);
