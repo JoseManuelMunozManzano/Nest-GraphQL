@@ -135,6 +135,7 @@ Cosas a ver:
 - Consultas por usuario
 - Indices
 - LazyRelationships
+- Seed (Llenar la BD con data)
 
 NOTA: Indicar que la autorización y autenticación se hacen con GraphQL para aprender, pero debería hacerse mejor en RESTFul para que solo usuarios autenticados puedan ver la definición de GraphQL.
 
