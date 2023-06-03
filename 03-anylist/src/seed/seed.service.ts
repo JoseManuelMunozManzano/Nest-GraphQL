@@ -3,11 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { SEED_USERS } from './data/seed-data';
+import { SEED_ITEMS, SEED_USERS } from './data/seed-data';
 
 import { Item } from './../items/entities/item.entity';
 import { User } from './../users/entities/user.entity';
+
 import { UsersService } from './../users/users.service';
+import { ItemsService } from './../items/items.service';
 
 @Injectable()
 export class SeedService {
@@ -36,6 +38,7 @@ export class SeedService {
     private readonly usersRepository: Repository<User>,
 
     private readonly usersService: UsersService,
+    private readonly itemsService: ItemsService,
   ) {
     this.isProd = configService.get('STATE') === 'prod';
   }
@@ -52,6 +55,7 @@ export class SeedService {
     const user = await this.loadUsers();
 
     // Crear items
+    await this.loadItems(user);
 
     return true;
   }
@@ -81,5 +85,17 @@ export class SeedService {
 
     // Devuelvo el primer usuario porque los items pertenecerán a este usuario.
     return users[0];
+  }
+
+  async loadItems(user: User): Promise<void> {
+    const itemsPromises = [];
+
+    // Creo un arreglo de promesas
+    for (const item of SEED_ITEMS) {
+      itemsPromises.push(this.itemsPromisesService.create(item, user));
+    }
+
+    // Ejecutar todas las promesas
+    await Promise.all(itemsPromises);
   }
 }
