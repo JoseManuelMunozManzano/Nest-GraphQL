@@ -1,5 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { Item } from './../items/entities/item.entity';
+import { User } from './../users/entities/user.entity';
 
 @Injectable()
 export class SeedService {
@@ -20,7 +25,13 @@ export class SeedService {
   // Es decir, si vale dev podremos ejecutar el SEED y si vale prod NO podremos ejecutarlo.
   //
   // Para poder usar las variables de entorno recordar que hay que inyectar el ConfigModule
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    @InjectRepository(Item)
+    private readonly itemsRepository: Repository<Item>,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+  ) {
     this.isProd = configService.get('STATE') === 'prod';
   }
 
@@ -30,11 +41,28 @@ export class SeedService {
     }
 
     // Limpiar la BD - BORRAR TODO
+    await this.deleteDatabase();
 
     // Crear usuarios
 
     // Crear items
 
     return true;
+  }
+
+  async deleteDatabase() {
+    // Borrar items
+    await this.itemsRepository
+      .createQueryBuilder()
+      .delete()
+      .where({})
+      .execute();
+
+    // Borrar usuarios
+    await this.usersRepository
+      .createQueryBuilder()
+      .delete()
+      .where({})
+      .execute();
   }
 }
