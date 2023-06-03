@@ -35,6 +35,8 @@ yarn start:dev
 http://localhost:3000/graphql
 ```
 
+7. Ejecutar la **"mutation"** executeSeed para llenar la BD con información
+
 Cosas a ver:
 
 - Postgres

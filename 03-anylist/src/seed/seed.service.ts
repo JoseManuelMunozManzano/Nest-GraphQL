@@ -92,7 +92,7 @@ export class SeedService {
 
     // Creo un arreglo de promesas
     for (const item of SEED_ITEMS) {
-      itemsPromises.push(this.itemsPromisesService.create(item, user));
+      itemsPromises.push(this.itemsService.create(item, user));
     }
 
     // Ejecutar todas las promesas
