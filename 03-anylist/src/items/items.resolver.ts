@@ -1,5 +1,6 @@
 import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 
 import { ItemsService } from './items.service';
 
@@ -7,7 +8,8 @@ import { Item } from './entities/item.entity';
 import { User } from './../users/entities/user.entity';
 
 import { UpdateItemInput, CreateItemInput } from './dto/inputs';
-import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
+import { PaginationArgs } from './../common/dto/args/pagination.args';
+
 import { CurrentUser } from './../auth/decorators/current-user.decorator';
 
 // Para tener acceso al usuario (cuyo ID tenemos en el token) usamos nuestro @UseGuards(JwtAuthGuard)
@@ -28,8 +30,14 @@ export class ItemsResolver {
     return this.itemsService.create(createItemInput, user);
   }
 
+  // Añadimos paginación
   @Query(() => [Item], { name: 'items' })
-  async findAll(@CurrentUser() user: User): Promise<Item[]> {
+  async findAll(
+    @CurrentUser() user: User,
+    @Args() paginationArgs: PaginationArgs,
+  ): Promise<Item[]> {
+    console.log(paginationArgs);
+
     return this.itemsService.findAll(user);
   }
 

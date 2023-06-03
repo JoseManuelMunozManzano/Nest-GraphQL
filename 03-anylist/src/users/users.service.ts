@@ -5,12 +5,11 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { ValidRoles } from './../auth/enums/valid-roles.enum';
 
 import { SingupInput } from './../auth/dto/inputs/signup.input';
-import { ErrorHandle } from './../common/error-handle';
+import { ErrorHandle } from '../common/exception/error-handle';
 
 @Injectable()
 export class UsersService {
