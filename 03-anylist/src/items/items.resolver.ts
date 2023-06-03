@@ -36,9 +36,7 @@ export class ItemsResolver {
     @CurrentUser() user: User,
     @Args() paginationArgs: PaginationArgs,
   ): Promise<Item[]> {
-    console.log(paginationArgs);
-
-    return this.itemsService.findAll(user);
+    return this.itemsService.findAll(user, paginationArgs);
   }
 
   // Indicar que para GraphQL existe el tipo ID.

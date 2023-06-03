@@ -1,8 +1,9 @@
 import { Repository } from 'typeorm';
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { UpdateItemInput, CreateItemInput } from './dto/inputs';
+import { PaginationArgs } from './../common/dto/args/pagination.args';
 
 import { Item } from './entities/item.entity';
 import { User } from './../users/entities/user.entity';
@@ -28,10 +29,17 @@ export class ItemsService {
     return await this.itemsRepository.save(newItem);
   }
 
-  async findAll(user: User): Promise<Item[]> {
-    // TODO: filtrar, paginar, por usuario...
+  async findAll(user: User, paginationArgs: PaginationArgs): Promise<Item[]> {
+    // Siempre van a tener valores por el lado de TypeScript.
+    const { limit, offset } = paginationArgs;
+
+    // TODO: filtrar
     // Traemos todos los items del usuario
     return await this.itemsRepository.find({
+      // Este es el limit, los registros que va a traer.
+      take: limit,
+      // Este es el offset, los registros que se salta.
+      skip: offset,
       // Habiendo indicado lazy a true en item.entity.ts esto ya no haría falta.
       //relations: { user: true },
       where: {
