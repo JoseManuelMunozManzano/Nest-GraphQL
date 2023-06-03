@@ -8,7 +8,7 @@ import { Item } from './entities/item.entity';
 import { User } from './../users/entities/user.entity';
 
 import { UpdateItemInput, CreateItemInput } from './dto/inputs';
-import { PaginationArgs } from './../common/dto/args/pagination.args';
+import { PaginationArgs, SearchArgs } from './../common/dto/args';
 
 import { CurrentUser } from './../auth/decorators/current-user.decorator';
 
@@ -31,11 +31,17 @@ export class ItemsResolver {
   }
 
   // Añadimos paginación
+  // Añadimos búsqueda
+  // Cuando hay más de un @Args no funciona correctamente. GraphQL dirá que las propiedades del primer @Args
+  // no deberían existir porque son sobreescritas por las propiedades del segundo @Args.
+  // El problema viene del class validator. Ver main.ts
   @Query(() => [Item], { name: 'items' })
   async findAll(
     @CurrentUser() user: User,
     @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
   ): Promise<Item[]> {
+    // console.log({ paginationArgs, searchArgs });
     return this.itemsService.findAll(user, paginationArgs);
   }
 
