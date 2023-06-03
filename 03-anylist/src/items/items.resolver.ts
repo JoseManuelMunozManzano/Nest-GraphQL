@@ -41,8 +41,9 @@ export class ItemsResolver {
     @Args() paginationArgs: PaginationArgs,
     @Args() searchArgs: SearchArgs,
   ): Promise<Item[]> {
-    // console.log({ paginationArgs, searchArgs });
-    return this.itemsService.findAll(user, paginationArgs);
+    // Según el Clean Code, cuando enviamos más de 3 argumentos a una función o un método, es mejor
+    // enviarle un único objeto. Estamos en el límite.
+    return this.itemsService.findAll(user, paginationArgs, searchArgs);
   }
 
   // Indicar que para GraphQL existe el tipo ID.

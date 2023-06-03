@@ -1,9 +1,9 @@
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { UpdateItemInput, CreateItemInput } from './dto/inputs';
-import { PaginationArgs } from './../common/dto/args/pagination.args';
+import { PaginationArgs, SearchArgs } from './../common/dto/args';
 
 import { Item } from './entities/item.entity';
 import { User } from './../users/entities/user.entity';
@@ -29,12 +29,20 @@ export class ItemsService {
     return await this.itemsRepository.save(newItem);
   }
 
-  async findAll(user: User, paginationArgs: PaginationArgs): Promise<Item[]> {
+  async findAll(
+    user: User,
+    paginationArgs: PaginationArgs,
+    searchArgs: SearchArgs,
+  ): Promise<Item[]> {
     // Siempre van a tener valores por el lado de TypeScript.
     const { limit, offset } = paginationArgs;
+    // Este valor puede venir nulo.
+    const { search } = searchArgs;
 
-    // TODO: filtrar
-    // Traemos todos los items del usuario
+    // Traemos todos los items del usuario.
+    //
+    // NOTA: Esto ya ha crecido mucho, y encima la búsqueda no acaba de funciona bien.
+    // Se enseña como sería la búsqueda con esta estructura y luego lo haremos con un QueryBuilder.
     return await this.itemsRepository.find({
       // Este es el limit, los registros que va a traer.
       take: limit,
@@ -46,6 +54,11 @@ export class ItemsService {
         user: {
           id: user.id,
         },
+        // Filtro de búsqueda con like.
+        // Problema: Si busco rice no me encuentra Rice y si busco Rice no me encuentra rice, y no
+        // tiene fácil solución. Además, si no mando ningún search el toLowerCase() hará que falle,
+        // porque search será undefined (aquí TS debería advertirme algo porque search es opcional...)
+        name: Like(`%${search.toLowerCase()}%`),
       },
     });
   }
