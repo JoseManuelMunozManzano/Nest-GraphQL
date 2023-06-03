@@ -110,6 +110,8 @@ yarn start:dev
 http://localhost:3000/graphql
 ```
 
+7. Ejecutar la **"mutation"** executeSeed para llenar la BD con información
+
 Cosas a ver:
 
 - Postgres
@@ -136,6 +138,11 @@ Cosas a ver:
 - Indices
 - LazyRelationships
 - Seed (Llenar la BD con data)
+- Paginaciones
+- Búsquedas por nombre
+- Paginar y buscar de forma simultánea
+- Paginar y buscar por items dentro de usuarios
+- Aplicar los filtros a la hora de consultar los items de los usuarios
 
 NOTA: Indicar que la autorización y autenticación se hacen con GraphQL para aprender, pero debería hacerse mejor en RESTFul para que solo usuarios autenticados puedan ver la definición de GraphQL.
 
