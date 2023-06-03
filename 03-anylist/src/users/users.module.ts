@@ -16,7 +16,8 @@ import { ItemsModule } from 'src/items/items.module';
   imports: [TypeOrmModule.forFeature([User]), ItemsModule],
   exports: [
     // Para que otro módulo pueda inyectar userRepository, pero por ahora lo dejamos comentado.
-    // TypeOrmModule,
+    // Descomentamos porque para el SEED vamos a usar userRepository.
+    TypeOrmModule,
     UsersService,
   ],
 })

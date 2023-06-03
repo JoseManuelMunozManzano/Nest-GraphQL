@@ -13,6 +13,10 @@ import { Item } from './entities/item.entity';
   // Se indica forFeature porque solo puede haber un forRoot por aplicación, especificado en app.module,
   // y luego en un arreglo las entidades que va a tener este módulo
   imports: [TypeOrmModule.forFeature([Item])],
-  exports: [ItemsService, TypeOrmModule],
+  exports: [
+    ItemsService,
+    // Vamos a usar itemsRepository en el SEED.
+    TypeOrmModule,
+  ],
 })
 export class ItemsModule {}
