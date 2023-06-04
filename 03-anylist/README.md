@@ -68,6 +68,13 @@ Cosas a ver:
 - Paginar y buscar de forma simultánea
 - Paginar y buscar por items dentro de usuarios
 - Aplicar los filtros a la hora de consultar los items de los usuarios
+- Relaciones
+- Maestro detalles
+- SEEDs
+- Constraints
+- Filtros, paginar y conteo
+- Actualizar elementos
+- Actualizaciones con query builders
 
 NOTA: Indicar que la autorización y autenticación se hacen con GraphQL para aprender, pero debería hacerse mejor en RESTFul para que solo usuarios autenticados puedan ver la definición de GraphQL.
 
