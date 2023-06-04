@@ -14,9 +14,11 @@ import { UsersService } from './users.service';
 import { ItemsService } from '../items/items.service';
 
 import { User } from './entities/user.entity';
+import { Item } from './../items/entities/item.entity';
 
 import { UpdateUserInput } from './dto/update-user.input';
 import { ValidRolesArgs } from './dto/args/roles.arg';
+import { PaginationArgs, SearchArgs } from './../common/dto/args';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -99,5 +101,22 @@ export class UsersResolver {
   ): Promise<number> {
     // Hemos inyectado itemsService porque esta cuenta de items le corresponde hacerlo al módulo de items.
     return this.itemsService.itemCountByUser(user);
+  }
+
+  // Custom Resolver para añadir los items al user, pero como nosotros queramos, en este caso para
+  // aplicar filtros de paginación y búsqueda.
+  // El name es 'items', igual que tenemos en el nombre del campo en user.entity.ts,
+  // aunque no es obligatorio que se llame igual.
+  //
+  // Ahora, en cualquier query donde se pidan los items, y donde el padre sea user, tendremos la
+  // posibilidad de tener estos filtros de paginación y búsqueda.
+  @ResolveField(() => [Item], { name: 'items' })
+  async getItemsByUser(
+    @CurrentUser() adminUser: User,
+    @Parent() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
+  ): Promise<Item[]> {
+    return this.itemsService.findAll(user, paginationArgs, searchArgs);
   }
 }

@@ -45,7 +45,6 @@ export class User {
   @Field(() => Boolean)
   isActive: boolean;
 
-  // TODO: relaciones
   // La relación en este campo es la siguiente:
   // Muchos updates pueden estar hechos por una persona.
   // Esto es nuevo en el sentido de que no habíamos hecho en el curso de Nest con REST un @ManyToOne en la misma tabla.
@@ -80,11 +79,11 @@ export class User {
   //
   //
   //
-  // PROBLEMA: Si quiero hacer esta query en GraphQL, paginando items dentro de users.
+  // PROBLEMA: Si quiero hacer esta query en GraphQL, paginando items dentro de users y con filtro de búsqueda:
   // {
   //   users {
   //     fullName
-  //     items(limit: 5, offset: 0) {
+  //     items(limit: 5, offset: 0, search: "rice") {
   //       name
   //     }
   //   }
@@ -94,8 +93,15 @@ export class User {
   // Queremos romper la relación automática y definir la forma, como yo quiera, controlada,
   // como estos items se construyen, y no decirle a typeorm que se encargue de cargarlos.
   // Así nuestros queries van a ser muy flexibles.
+  //
+  // SOLUCION: Vamos a eliminar estos items del objeto de GraphQL.
+  // La relación de aquí abajo la dejamos porque es correcta, pero NO queremos que GraphQL sepa que aquí
+  // tenemos una relación directa y la construiremos nosotros con un Custom Resolver como hicimos en el método
+  // itemCount(), en users.resolver.ts
   @OneToMany(() => Item, (item) => item.user, { lazy: true })
-  // Parte GraphQL
-  @Field(() => [Item])
+  // Parte GraphQL --> Comentado para que, como hemos dicho, GraphQL no conozca esta relación.
+  // Ahora, para GraphQL, el objeto usuario NO tiene items, no los puedo consultar en una query.
+  // Es lo mismo que hicimos un poco más arriba con el campo password (no tiene @Field)
+  // @Field(() => [Item])
   items: Item[];
 }
