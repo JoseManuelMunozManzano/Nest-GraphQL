@@ -1,4 +1,4 @@
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -135,7 +135,9 @@ export class ItemsService {
     // Devolvemos así porque el id al hacer el remove se pierde. Da el siguiente error:
     // Cannot return null for non-nullable field item.id
     // Por tanto devolvemos el id que nos pasan en el body.
-    return { ...item, id };
+    //
+    // Añadido la devolución de user para que funcione.
+    return { ...item, id, user };
   }
 
   async itemCountByUser(user: User): Promise<number> {

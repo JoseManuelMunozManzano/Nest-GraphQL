@@ -12,9 +12,11 @@ import {
 
 import { UsersService } from './users.service';
 import { ItemsService } from '../items/items.service';
+import { ListsService } from '../lists/lists.service';
 
 import { User } from './entities/user.entity';
 import { Item } from './../items/entities/item.entity';
+import { List } from './../lists/entities/list.entity';
 
 import { UpdateUserInput } from './dto/update-user.input';
 import { ValidRolesArgs } from './dto/args/roles.arg';
@@ -31,6 +33,7 @@ export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
     private readonly itemsService: ItemsService,
+    private readonly listsService: ListsService,
   ) {}
 
   // Esto deberá estar validado y será para roles de administrador.
@@ -89,6 +92,8 @@ export class UsersResolver {
     return this.usersService.block(id, user);
   }
 
+  // ITEMS
+
   // Vamos a hacer una pequeña modificación a nuestro esquema para indicarle que hay una nueva propiedad calculada
   // que puede ser consultada (la cantidad de items por usuario)
   // Cuando alquien consulta esa propiedad en Apollo, GraphQL me va a decir el método que se va a ejecutar cuando
@@ -126,5 +131,25 @@ export class UsersResolver {
     @Args() searchArgs: SearchArgs,
   ): Promise<Item[]> {
     return this.itemsService.findAll(user, paginationArgs, searchArgs);
+  }
+
+  // LISTAS
+
+  @ResolveField(() => Int, { name: 'listCount' })
+  async listCount(
+    @CurrentUser() adminUser: User,
+    @Parent() user: User,
+  ): Promise<number> {
+    return this.listsService.listCountByUser(user);
+  }
+
+  @ResolveField(() => [List], { name: 'lists' })
+  async getListsByUser(
+    @CurrentUser() adminUser: User,
+    @Parent() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
+  ): Promise<List[]> {
+    return this.listsService.findAll(user, paginationArgs, searchArgs);
   }
 }

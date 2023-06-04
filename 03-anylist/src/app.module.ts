@@ -14,6 +14,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { SeedModule } from './seed/seed.module';
 import { CommonModule } from './common/common.module';
+import { ListsModule } from './lists/lists.module';
 
 // Indicar que se pueden mezclar controladores con GraphQL.
 // Se puede tener un controlador (un endpoint) que sea /graphql y dentro tener todas nuestras queries y mutations.
@@ -96,6 +97,8 @@ import { CommonModule } from './common/common.module';
     SeedModule,
 
     CommonModule,
+
+    ListsModule,
   ],
   controllers: [],
   providers: [],

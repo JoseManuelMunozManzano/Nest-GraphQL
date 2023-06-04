@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 
 import { Item } from './../../items/entities/item.entity';
+import { List } from './../../lists/entities/list.entity';
 
 @Entity({ name: 'users' })
 @ObjectType()
@@ -104,4 +105,10 @@ export class User {
   // Es lo mismo que hicimos un poco más arriba con el campo password (no tiene @Field)
   // @Field(() => [Item])
   items: Item[];
+
+  // En esta entidad de Users, un usuario puede tener muchas listas.
+  // No lo pongo como @Field porque no quiero que GraphQL conozca esta relación.
+  // La voy a indicar yo para añadir filtros.
+  @OneToMany(() => List, (list) => list.user)
+  lists: List[];
 }
