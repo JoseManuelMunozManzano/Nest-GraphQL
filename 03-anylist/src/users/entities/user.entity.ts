@@ -77,6 +77,23 @@ export class User {
   // Parte typeorm
   // Lo de lazy a true no tiene mucho sentido porque generalmente no vamos a querer cargar
   // los items de los usuarios, pero para aprender, vamos a recuperarlos. Luego lo deshabilitaremos.
+  //
+  //
+  //
+  // PROBLEMA: Si quiero hacer esta query en GraphQL, paginando items dentro de users.
+  // {
+  //   users {
+  //     fullName
+  //     items(limit: 5, offset: 0) {
+  //       name
+  //     }
+  //   }
+  // }
+  // ahora mismo no funciona debido a la relación que tenemos.
+  // Esto es porque este campo items está propiamente relacionado con nuestra BD.
+  // Queremos romper la relación automática y definir la forma, como yo quiera, controlada,
+  // como estos items se construyen, y no decirle a typeorm que se encargue de cargarlos.
+  // Así nuestros queries van a ser muy flexibles.
   @OneToMany(() => Item, (item) => item.user, { lazy: true })
   // Parte GraphQL
   @Field(() => [Item])
