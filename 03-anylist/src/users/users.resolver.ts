@@ -49,12 +49,20 @@ export class UsersResolver {
   //
   // Solo usuarios con rol admin pueden hacer el findAll()
   // Para esto usamos nuestro @CurrentUser indicando el rol.
+  //
+  // Añadimos filtro de paginación y búsqueda.
   @Query(() => [User], { name: 'users' })
   findAll(
     @Args() validRoles: ValidRolesArgs,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
     @CurrentUser([ValidRoles.admin]) user: User,
   ): Promise<User[]> {
-    return this.usersService.findAll(validRoles.roles);
+    return this.usersService.findAll(
+      validRoles.roles,
+      paginationArgs,
+      searchArgs,
+    );
   }
 
   @Query(() => User, { name: 'user' })

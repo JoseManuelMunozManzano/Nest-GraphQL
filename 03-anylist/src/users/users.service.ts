@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { UpdateUserInput } from './dto/update-user.input';
+import { PaginationArgs, SearchArgs } from 'src/common/dto/args';
 import { ValidRoles } from './../auth/enums/valid-roles.enum';
 
 import { SingupInput } from './../auth/dto/inputs/signup.input';
@@ -49,12 +50,22 @@ export class UsersService {
     }
   }
 
-  async findAll(roles: ValidRoles[]): Promise<User[]> {
+  async findAll(
+    roles: ValidRoles[],
+    paginationArgs: PaginationArgs,
+    searchArgs: SearchArgs,
+  ): Promise<User[]> {
+    const { limit, offset } = paginationArgs;
+    const { search } = searchArgs;
+
     // Cargar la relación lastUpdatedBy usando relations
     // NOTA: Indicando lazy a true en la propiedad lastUpdateBy en user.entity.ts no hace falta, pero hay que saber esta forma
     // de cargar relaciones.
-    if (roles.length === 0)
-      return this.userRepository.find(/* { relations: { lastUpdateBy: true } } */);
+    //
+    // Ahora todo lo hacemos con el query Builder
+    //
+    //if (roles.length === 0)
+    //  return this.userRepository.find(/* { relations: { lastUpdateBy: true } } */);
 
     //? Tenemos roles ['admin', 'superUser', ...]
     // Con createQueryBuilder tenemos más control a la hora de hacer las peticiones.
@@ -64,17 +75,34 @@ export class UsersService {
     //
     // Cargar la relación lastUpdatedBy cuando hay roles. Se ha modificado user.entity.ts
     // Otra forma de solucionar esto sería modificar este QueryBuilder para seleccionarlo.
-    return (
-      this.userRepository
-        .createQueryBuilder()
-        // el primer roles es el campo de la BD y el segundo son los roles que mando por parámetro.
+    //
+    // Añadimos paginación y búsqueda.
+    const queryBuilder = this.userRepository
+      .createQueryBuilder()
+      .take(limit)
+      .skip(offset);
+
+    if (roles.length !== 0) {
+      // el primer roles es el campo de la BD y el segundo son los roles que mando por parámetro.
+      queryBuilder
         .andWhere('ARRAY[roles] && ARRAY[:...roles]')
         // Con setParameter podemos escapar caracteres especiales, evitar inyecciones de query...
         // El roles escrito entre comillas se refiere al ARRAY[:...roles] y el segundo roles es
         // el mandado por parámetro.
-        .setParameter('roles', roles)
-        .getMany()
-    );
+        .setParameter('roles', roles);
+    }
+
+    if (search) {
+      // IMPORTANTE!! typeorm modifica los nombres a minúsculas, por lo que NO encuentra fullname.
+      // Para obligar a que el nombre del campo sea fullName, hay que indicarlo entre comillas,
+      // es decir, "fullName"
+      // https://github.com/typeorm/typeorm/issues/2763
+      queryBuilder.andWhere('LOWER("fullName") like :fullName', {
+        fullName: `%${search.toLowerCase()}%`,
+      });
+    }
+
+    return queryBuilder.getMany();
   }
 
   async findOneByEmail(email: string): Promise<User> {
