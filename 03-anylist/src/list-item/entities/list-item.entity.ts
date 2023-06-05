@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { List } from './../../lists/entities/list.entity';
 import { Item } from './../../items/entities/item.entity';
@@ -19,8 +19,16 @@ export class ListItem {
   @Field(() => Boolean)
   completed: boolean;
 
-  // Realciones
-  //list: List;
+  // Relaciones
 
-  //item: Item;
+  // Muchos listItems pueden pertenecer a una lista.
+  // No indicamos @Field porque vamos a quere hacer filtros.
+  @ManyToOne(() => List, (list) => list.listItem, { lazy: true })
+  //@Field(() => List)
+  list: List;
+
+  // Muchas entradas de listItem se asocian a un único item.
+  @ManyToOne(() => Item, (item) => item.listItem, { lazy: true })
+  @Field(() => Item)
+  item: Item;
 }

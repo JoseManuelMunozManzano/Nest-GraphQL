@@ -4,10 +4,12 @@ import {
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { User } from './../../users/entities/user.entity';
+import { ListItem } from './../../list-item/entities/list-item.entity';
 
 // Pueden convivir perfectamente el decorador que indica que es una entidad con el decorador que indica que es un
 // object type (para GraphQL)
@@ -77,4 +79,9 @@ export class Item {
   // Parte GraphQL
   @Field(() => User)
   user: User;
+
+  // Un item puede estar en varios listItems
+  @OneToMany(() => ListItem, (listItem) => listItem.item, { lazy: true })
+  @Field(() => [ListItem])
+  listItem: ListItem[];
 }
