@@ -30,6 +30,8 @@ export class List {
 
   // Una lista puede tener muchos listItem
   @OneToMany(() => ListItem, (listItem) => listItem.list, { lazy: true })
-  @Field(() => [ListItem])
+  // Comentado porque no queremos que se pueda pedir por GraphQL.
+  // Lo vamos a gestionar nosotros en lists.resolver.ts
+  // @Field(() => [ListItem])
   listItem: ListItem[];
 }

@@ -1,12 +1,23 @@
 import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 
 import { ListsService } from './lists.service';
+import { ListItemService } from './../list-item/list-item.service';
+
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 
 import { CurrentUser } from './../auth/decorators/current-user.decorator';
 
 import { List } from './entities/list.entity';
+import { ListItem } from './../list-item/entities/list-item.entity';
 import { User } from './../users/entities/user.entity';
 
 import { CreateListInput } from './dto/create-list.input';
@@ -16,7 +27,10 @@ import { PaginationArgs, SearchArgs } from './../common/dto/args';
 @Resolver(() => List)
 @UseGuards(JwtAuthGuard)
 export class ListsResolver {
-  constructor(private readonly listsService: ListsService) {}
+  constructor(
+    private readonly listsService: ListsService,
+    private readonly listItemsService: ListItemService,
+  ) {}
 
   @Mutation(() => List, { name: 'createList' })
   async createList(
@@ -57,5 +71,12 @@ export class ListsResolver {
     @CurrentUser() user: User,
   ): Promise<List> {
     return this.listsService.remove(id, user);
+  }
+
+  @ResolveField(() => [ListItem], { name: 'items' })
+  async getListitems(@Parent() list: List): Promise<ListItem[]> {
+    // Primero traeremos todos los items y luego haremos la paginación.
+    // Se ha inyectado ListItemService para usar su método findAll() y obtener todos los items.
+    return this.listItemsService.findAll();
   }
 }
