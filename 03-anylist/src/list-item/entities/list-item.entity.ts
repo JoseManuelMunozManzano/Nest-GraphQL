@@ -12,6 +12,8 @@ import { Item } from './../../items/entities/item.entity';
 
 @Entity('listItems')
 // Indicamos la constraint
+// https://wanago.io/2021/08/09/constraints-postgresql-typeorm/
+// https://typeorm.io/decorator-reference#unique
 @Unique('listItem-item', ['list', 'item'])
 @ObjectType()
 export class ListItem {
