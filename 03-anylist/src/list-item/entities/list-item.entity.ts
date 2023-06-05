@@ -30,9 +30,8 @@ export class ListItem {
   // Relaciones
 
   // Muchos listItems pueden pertenecer a una lista.
-  // No indicamos @Field porque vamos a quere hacer filtros.
   @ManyToOne(() => List, (list) => list.listItem, { lazy: true })
-  //@Field(() => List)
+  @Field(() => List)
   list: List;
 
   // Muchas entradas de listItem se asocian a un único item.

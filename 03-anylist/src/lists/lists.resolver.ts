@@ -7,6 +7,7 @@ import {
   ID,
   ResolveField,
   Parent,
+  Int,
 } from '@nestjs/graphql';
 
 import { ListsService } from './lists.service';
@@ -74,9 +75,18 @@ export class ListsResolver {
   }
 
   @ResolveField(() => [ListItem], { name: 'items' })
-  async getListitems(@Parent() list: List): Promise<ListItem[]> {
-    // Primero traeremos todos los items y luego haremos la paginación.
+  async getListitems(
+    // Sabemos la lista que es porque tenemos el padre
+    @Parent() list: List,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
+  ): Promise<ListItem[]> {
     // Se ha inyectado ListItemService para usar su método findAll() y obtener todos los items.
-    return this.listItemsService.findAll();
+    return this.listItemsService.findAll(list, paginationArgs, searchArgs);
+  }
+
+  @ResolveField(() => Int, { name: 'totalItems' })
+  async countListItemsByList(@Parent() list: List): Promise<number> {
+    return this.listItemsService.countListItemsByList(list);
   }
 }
