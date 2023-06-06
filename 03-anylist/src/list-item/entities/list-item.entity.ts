@@ -32,11 +32,13 @@ export class ListItem {
   // Relaciones
 
   // Muchos listItems pueden pertenecer a una lista.
+  // Gracias a lazy a true en GraphQL podremos cargar esta relación.
   @ManyToOne(() => List, (list) => list.listItem, { lazy: true })
   @Field(() => List)
   list: List;
 
   // Muchas entradas de listItem se asocian a un único item.
+  // Gracias a lazy a true en GraphQL podremos cargar esta relación.
   @ManyToOne(() => Item, (item) => item.listItem, { lazy: true })
   @Field(() => Item)
   item: Item;

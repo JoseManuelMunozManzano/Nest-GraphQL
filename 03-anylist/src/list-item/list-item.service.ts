@@ -72,8 +72,29 @@ export class ListItemService {
     return listItem;
   }
 
-  update(id: number, updateListItemInput: UpdateListItemInput) {
-    return `This action updates a #${id} listItem`;
+  async update(
+    id: string,
+    updateListItemInput: UpdateListItemInput,
+  ): Promise<ListItem> {
+    const { listId, itemId, ...rest } = updateListItemInput;
+
+    // Lo vamos a acabar haciendo con un QueryBuilder, pero esta es la otra forma de hacerlo, con preload,
+    // menos flexible y que no acaba de funcionar del todo.
+    //
+    // No funciona del todo porque si lo que queremos actualizar es el id de la lista a la que pertenece
+    // este listItem (su listId), veremos que no lo actualiza.
+    //
+    // Por eso, como se ha comentado, la solución es hacerlo con un QueryBuilder.
+    const listItem = await this.listItemsRepository.preload({
+      ...rest,
+      list: { id: listId },
+      item: { id: itemId },
+    });
+
+    if (!listItem)
+      throw new NotFoundException(`List item with id ${id} not found`);
+
+    return this.listItemsRepository.save(listItem);
   }
 
   remove(id: number) {
