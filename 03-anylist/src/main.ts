@@ -20,6 +20,11 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(3000);
+  // Si estamos en producción o tenemos variable de entorno de puerto,
+  // se escucha por el puerto indicado. Si estamos en desarrollo será el 3000.
+  const PORT = process.env.PORT || 3000;
+  await app.listen(PORT, () => {
+    console.log(`App running on port ${PORT}`);
+  });
 }
 bootstrap();

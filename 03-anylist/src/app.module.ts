@@ -78,14 +78,20 @@ import { ListItemModule } from './list-item/list-item.module';
     // yarn add @nestjs/typeorm typeorm pg
     TypeOrmModule.forRoot({
       type: 'postgres',
+      // Esta configuración es adicional y necesaria al desplegar la app a producción.
+      ssl:
+        process.env.STATE === 'prod'
+          ? { rejectUnauthorized: false, sslmode: 'require' }
+          : (false as any),
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
-      database: process.env.DB_DB_NAME,
+      database: process.env.DB_NAME,
       // Con synchronize al guardar automáticamente se crean las tablas de bases de datos.
       // IMPORTANTE: En producción synchronize: false
-      synchronize: true,
+      //
+      // synchronize: true,
       autoLoadEntities: true,
     }),
 
@@ -106,4 +112,14 @@ import { ListItemModule } from './list-item/list-item.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  // Esto se indica para que, al desplegar la app, se puedan ver estos valores en los logs.
+  constructor() {
+    console.log('STATE', process.env.STATE);
+    console.log('host', process.env.DB_HOST);
+    console.log('port', +process.env.DB_PORT);
+    console.log('username', process.env.DB_USERNAME);
+    console.log('password', process.env.DB_PASSWORD);
+    console.log('database', process.env.DB_NAME);
+  }
+}
