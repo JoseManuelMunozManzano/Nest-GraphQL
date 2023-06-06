@@ -85,16 +85,35 @@ export class ListItemService {
     // este listItem (su listId), veremos que no lo actualiza.
     //
     // Por eso, como se ha comentado, la solución es hacerlo con un QueryBuilder.
-    const listItem = await this.listItemsRepository.preload({
-      ...rest,
-      list: { id: listId },
-      item: { id: itemId },
-    });
+    //
+    // const listItem = await this.listItemsRepository.preload({
+    //   ...rest,
+    //   list: { id: listId },
+    //   item: { id: itemId },
+    // });
 
-    if (!listItem)
-      throw new NotFoundException(`List item with id ${id} not found`);
+    // if (!listItem)
+    //   throw new NotFoundException(`List item with id ${id} not found`);
 
-    return this.listItemsRepository.save(listItem);
+    // return this.listItemsRepository.save(listItem);
+
+    const queryBuilder = this.listItemsRepository
+      .createQueryBuilder()
+      .update()
+      .set(rest)
+      .where('id = :id', { id });
+
+    // Actualizando las relaciones.
+    // Tenemos integridad referencial.
+    if (listId) queryBuilder.set({ list: { id: listId } });
+    if (itemId) queryBuilder.set({ item: { id: itemId } });
+
+    // execute() NO devuelve una instancia de nuestro objeto.
+    // Si devuelve un resultado indicando cuánta filas fueron insertadas...
+    await queryBuilder.execute();
+
+    // Por eso hacemos el findOne, que si regresa un objeto.
+    return this.findOne(id);
   }
 
   remove(id: number) {
