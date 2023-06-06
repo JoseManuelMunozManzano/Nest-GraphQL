@@ -1,5 +1,5 @@
-import { UseGuards } from '@nestjs/common';
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 
@@ -24,15 +24,20 @@ export class ListItemResolver {
     return this.listItemService.create(createListItemInput);
   }
 
+  // No lo vamos a hacer porque para saber los items que tiene una lista
+  // ya lo podemos saber haciendo la query sobre la lista.
+  //
   // @Query(() => [ListItem], { name: 'listItem' })
   // findAll() {
   //   return this.listItemService.findAll();
   // }
 
-  // @Query(() => ListItem, { name: 'listItem' })
-  // findOne(@Args('id', { type: () => Int }) id: number) {
-  //   return this.listItemService.findOne(id);
-  // }
+  @Query(() => ListItem, { name: 'listItem' })
+  async findOne(
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+  ): Promise<ListItem> {
+    return this.listItemService.findOne(id);
+  }
 
   // @Mutation(() => ListItem)
   // updateListItem(
