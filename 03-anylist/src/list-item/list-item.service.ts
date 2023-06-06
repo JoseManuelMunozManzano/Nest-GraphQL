@@ -35,7 +35,17 @@ export class ListItemService {
       list: { id: listId },
     });
 
-    return this.listItemsRepository.save(newListItem);
+    // Ahora mismo no obtiene la relación item. En GraphQL da el error
+    // Cannot return null for non-nullable field Item.name
+    //
+    // return this.listItemsRepository.save(newListItem);
+    //
+    // Para obtenerla hay varias formas. Esta es una forma de resolver el problema.
+    // Esperamos que se grabe
+    await this.listItemsRepository.save(newListItem);
+
+    // Y ahora cargamos todas sus relaciones llamando al findOne
+    return this.findOne(newListItem.id);
   }
 
   async findAll(
