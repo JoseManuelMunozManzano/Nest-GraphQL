@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 import { UpdateUserInput } from './dto/update-user.input';
 import { PaginationArgs, SearchArgs } from 'src/common/dto/args';
