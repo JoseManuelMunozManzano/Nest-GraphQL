@@ -20,7 +20,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    # Este nombre de imagen para crear el docker "local normal"
     image: nest-graphql
+    # Este nombre de imagen para dockerhub
+    #image: neimerc/nest-graphql-prod
     container_name: AnylistApp
     restart: always # reiniciar el contenedor si se detiene
     ports:
@@ -49,9 +52,26 @@ services:
 # Sin usar el docker-compose
 # Esto solo para saberlo.
 #    Para construir
-#       docker build -t nest-graphql-prod .
+#       docker build -t nest-graphql .
 #
 #    Para ejecutar, pero cuidado con las variables de entorno porque hay que indicarlas, bien manualmente
 #    o usando el fichero .env.prod. También se indica el puerto de mi equipo 8080, que se comunica con el
 #    4000 del contenedor.
-#       docker run --env-file=.env.prod -p 8080:4000 nest-graphql-prod
+#       docker run --env-file=.env.prod -p 8080:4000 nest-graphql
+
+# Conectar mi imagen con DockerHub (Si sube a DockerHub, pero no me acaba de funcionar pero puede ser porque tengo la BD en local)
+#      https://hub.docker.com/
+# Ahí nos creamos el repositorio.
+#
+# Ya en mi terminal:
+# Hay que logearse: docker logout y docker login, indicando usuario y password
+# Ejecutar:
+# Cambiar el nombre al nombre de producción
+#   docker tag nest-graphql neimerc/nest-graphql-prod:1.0.0
+#
+# Push a dockerhub
+#   docker push neimerc/nest-graphql-prod:1.0.0
+# Con esto ya aparece en Dockerhub
+#
+# Ahora, para descargar la imagen desde DockerHub:
+#   docker run -p 3200:4000 --env-file=.env.prod neimerc/nest-graphql-prod:1.0.0
