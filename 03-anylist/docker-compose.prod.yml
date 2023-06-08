@@ -45,3 +45,13 @@ services:
 
 # Run
 # docker-compose -f docker-compose.prod.yml --env-file .env.prod up
+
+# Sin usar el docker-compose
+# Esto solo para saberlo.
+#    Para construir
+#       docker build -t nest-graphql-prod .
+#
+#    Para ejecutar, pero cuidado con las variables de entorno porque hay que indicarlas, bien manualmente
+#    o usando el fichero .env.prod. También se indica el puerto de mi equipo 8080, que se comunica con el
+#    4000 del contenedor.
+#       docker run --env-file=.env.prod -p 8080:4000 nest-graphql-prod
